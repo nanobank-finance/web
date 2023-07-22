@@ -131,6 +131,46 @@ const loanApplicationColumns = [
     }
 ];
 
+const loanOfferColumns = [
+    {
+        title: 'Loan ID',
+        dataIndex: 'loan'
+    },
+    {
+        title: 'Borrower',
+        dataIndex: 'borrower'
+    },
+    {
+        title: 'Lender',
+        dataIndex: 'lender'
+    },
+    {
+        title: 'Principal',
+        dataIndex: 'principal'
+    },
+    {
+        title: 'Created',
+        dataIndex: 'created'
+    },
+    {
+        title: 'Offer Expiry',
+        dataIndex: 'offer_expiry'
+    },
+    {
+        title: 'Accepted',
+        dataIndex: 'accepted',
+        render: (text, record) => (record.closed ? 'Yes' : 'No')
+    },
+    {
+        title: 'Number of Payments',
+        dataIndex: 'payments'
+    },
+    {
+        title: 'Loan Status',
+        dataIndex: 'loan_status'
+    }
+];
+
 const load_endpoint = (user, url, success_callback, failure_callback) => {
     fetch(url, {
         method: 'GET',
@@ -296,9 +336,11 @@ const OffersToMe = () => {
     useEffect(() => {
         load_endpoint(
             user,
-            'http://127.0.0.1:8000/loans/user/self/open?perspective=borrower&recent=True',
+            'http://127.0.0.1:8000/loans/user/self/open?perspective=borrower',
             (result) => {
-                // setItems(result);
+                if (result.length > 0) {
+                    setItems(result);
+                }
                 setLoading(false);
             },
             (error) => {
@@ -309,7 +351,7 @@ const OffersToMe = () => {
 
     return (
         <div>
-            <Table columns={columns} dataSource={[]} /> {/* items */}
+            <Table columns={loanOfferColumns} dataSource={items} />
         </div>
     );
 };
