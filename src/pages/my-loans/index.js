@@ -62,56 +62,6 @@ const loanApplicationColumns = [
     }
 ];
 
-const loanOfferColumns = [
-    {
-        title: 'Loan ID',
-        dataIndex: 'loan'
-    },
-    {
-        title: 'Borrower',
-        dataIndex: 'borrower'
-    },
-    {
-        title: 'Lender',
-        dataIndex: 'lender'
-    },
-    {
-        title: 'Principal',
-        dataIndex: 'principal'
-    },
-    {
-        title: 'Created',
-        dataIndex: 'created',
-        render: (text) => (
-            <Tooltip title={text}>
-                <span>{moment(text).format('LL')}</span>
-            </Tooltip>
-        )
-    },
-    {
-        title: 'Offer Expiry',
-        dataIndex: 'offer_expiry',
-        render: (text) => (
-            <Tooltip title={text}>
-                <span>{moment(text).format('LL')}</span>
-            </Tooltip>
-        )
-    },
-    {
-        title: 'Accepted',
-        dataIndex: 'accepted',
-        render: (text, record) => (record.closed ? 'Yes' : 'No')
-    },
-    {
-        title: 'Number of Payments',
-        dataIndex: 'payments'
-    },
-    {
-        title: 'Loan Status',
-        dataIndex: 'loan_status'
-    }
-];
-
 const load_endpoint = (user, url, success_callback, failure_callback) => {
     fetch(url, {
         method: 'GET',
@@ -273,6 +223,108 @@ const OffersToMe = () => {
     const [dataLoading, setLoading] = useState(false);
     const [items, setItems] = useState([]);
     const { user, loading } = useAuth();
+    const [record, setRecord] = useState(null);
+    const [isModalVisible, setIsModalVisible] = useState(false);
+
+    const handleButtonClick = (record) => {
+        console.log('Button was clicked for record: ', record);
+        setRecord(record); // set the record
+        setIsModalVisible(true); // show the modal
+    };
+
+    const handleCancel = () => {
+        setIsModalVisible(false);
+    };
+
+    const handleOk = () => {
+        // const values = form.getFieldsValue();
+        // const startDate = dayjs(values.start);
+        // const expiryDate = dayjs(values.expiry);
+        // const maturityDate = dayjs(values.maturity);
+
+        // if (expiryDate.isAfter(startDate)) {
+        //     Modal.error({
+        //         title: 'Error',
+        //         content: 'The start date must be after the offer expiry date.'
+        //     });
+        //     return;
+        // }
+
+        // if (startDate.isAfter(maturityDate)) {
+        //     Modal.error({
+        //         title: 'Error',
+        //         content: 'The start date must be before the maturity date.'
+        //     });
+        //     return;
+        // }
+
+        // form.validateFields()
+        //     .then((values) => {
+        //         form.resetFields();
+        //         createLoanOffer(values, user);
+        //     })
+        //     .catch((info) => {
+        //         console.log('Validate Failed:', info);
+        //     });
+        return;
+    };
+
+    const loanOfferColumns = [
+        {
+            title: 'Loan ID',
+            dataIndex: 'loan'
+        },
+        {
+            title: 'Borrower',
+            dataIndex: 'borrower'
+        },
+        {
+            title: 'Lender',
+            dataIndex: 'lender'
+        },
+        {
+            title: 'Principal',
+            dataIndex: 'principal'
+        },
+        {
+            title: 'Created',
+            dataIndex: 'created',
+            render: (text) => (
+                <Tooltip title={text}>
+                    <span>{moment(text).format('LL')}</span>
+                </Tooltip>
+            )
+        },
+        {
+            title: 'Offer Expiry',
+            dataIndex: 'offer_expiry',
+            render: (text) => (
+                <Tooltip title={text}>
+                    <span>{moment(text).format('LL')}</span>
+                </Tooltip>
+            )
+        },
+        {
+            title: 'Accepted',
+            dataIndex: 'accepted',
+            render: (text, record) => (record.closed ? 'Yes' : 'No')
+        },
+        {
+            title: 'Number of Payments',
+            dataIndex: 'payments'
+        },
+        {
+            title: 'Loan Status',
+            dataIndex: 'loan_status'
+        },
+        {
+            title: 'Details',
+            dataIndex: '',
+            key: 'x',
+            render: (text, record) => <Button onClick={() => handleButtonClick(record)}>Details</Button>,
+            key: 'action'
+        }
+    ];
 
     useEffect(() => {
         load_endpoint(
@@ -292,6 +344,9 @@ const OffersToMe = () => {
 
     return (
         <div>
+            <Modal title="Offer Details" visible={isModalVisible} onOk={handleOk} onCancel={handleCancel} destroyOnClose={true}>
+                <div />
+            </Modal>
             <Table columns={loanOfferColumns} dataSource={items} />
         </div>
     );
