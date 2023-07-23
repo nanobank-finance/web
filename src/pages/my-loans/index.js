@@ -1,86 +1,18 @@
 import { useState, useEffect } from 'react';
 
 // material-ui
-import {
-    Avatar,
-    AvatarGroup,
-    Box,
-    Grid,
-    List,
-    ListItemAvatar,
-    ListItemButton,
-    ListItemSecondaryAction,
-    ListItemText,
-    Stack,
-    Typography
-} from '@mui/material';
+import { Grid } from '@mui/material';
 
 // ant design
-import { Tabs, Table, InputNumber, Button, Modal, Form } from 'antd';
+import { Tabs, Table, InputNumber, Button, Modal, Form, Tooltip } from 'antd';
+import moment from 'moment';
 
 // project import
-import OrdersTable from './OrdersTable';
-import IncomeAreaChart from './IncomeAreaChart';
-import MonthlyBarChart from './MonthlyBarChart';
-import MainCard from 'components/MainCard';
-import AnalyticEcommerce from 'components/cards/statistics/AnalyticEcommerce';
 import { useAuth } from 'pages/authentication/auth-forms/AuthProvider';
-
-// assets
-import { GiftOutlined, MessageOutlined, SettingOutlined } from '@ant-design/icons';
-import avatar1 from 'assets/images/users/avatar-1.png';
-import avatar2 from 'assets/images/users/avatar-2.png';
-import avatar3 from 'assets/images/users/avatar-3.png';
-import avatar4 from 'assets/images/users/avatar-4.png';
+import ImageComponent from 'components/ImageUUID';
 
 // react
 import { useNavigate } from 'react-router-dom';
-
-// the firebase auth api key is intended to be public
-// https://stackoverflow.com/a/37484053
-// https://firebase.google.com/docs/web/setup#available-libraries
-const firebaseConfig = {
-    apiKey: 'AIzaSyBQ8rb3jkIsusGKhGwGm-ri9VAjoof1OKA',
-    authDomain: 'nanocryptobank.firebaseapp.com',
-    projectId: 'nanocryptobank',
-    storageBucket: 'nanocryptobank.appspot.com',
-    messagingSenderId: '950014241040',
-    appId: '1:950014241040:web:16e7f8fa0f59bcaf7b5d95',
-    measurementId: 'G-H4F5Z43EKN'
-};
-
-// avatar style
-const avatarSX = {
-    width: 36,
-    height: 36,
-    fontSize: '1rem'
-};
-
-// action style
-const actionSX = {
-    mt: 0.75,
-    ml: 1,
-    top: 'auto',
-    right: 'auto',
-    alignSelf: 'flex-start',
-    transform: 'none'
-};
-
-// sales report status
-const status = [
-    {
-        value: 'today',
-        label: 'Today'
-    },
-    {
-        value: 'month',
-        label: 'This Month'
-    },
-    {
-        value: 'year',
-        label: 'This Year'
-    }
-];
 
 // ==============================|| DASHBOARD - DEFAULT ||============================== //
 
@@ -292,13 +224,106 @@ const OffersToMe = () => {
     const [dataLoading, setLoading] = useState(false);
     const [items, setItems] = useState([]);
     const { user, loading } = useAuth();
+    const [record, setRecord] = useState(null);
+    const [isModalVisible, setIsModalVisible] = useState(false);
+    const [loanDetails, setLoanDetails] = useState(null);
+    const loadLoanDetails = async (loanId) => {
+        setLoading(true);
+        const result = await fetch(`http://127.0.0.1:8000/loan?loan_id=${loanId}`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${user.token}`,
+                'X-User-Uid': user.uid
+            }
+        }).then((res) => res.json());
+
+        setLoanDetails(result);
+        setLoading(false);
+    };
+
+    const handleButtonClick = async (record) => {
+        console.log('Button was clicked for record: ', record);
+        setRecord(record); // set the record
+        setIsModalVisible(true); // show the modal
+
+        // Load loan details when modal is opened
+        await loadLoanDetails(record.loan);
+    };
+
+    const handleCancel = () => {
+        setIsModalVisible(false);
+    };
+
+    const handleOk = () => {
+        return;
+    };
+
+    const loanOfferColumns = [
+        {
+            title: 'Loan ID',
+            dataIndex: 'loan'
+        },
+        {
+            title: 'Borrower',
+            dataIndex: 'borrower'
+        },
+        {
+            title: 'Lender',
+            dataIndex: 'lender'
+        },
+        {
+            title: 'Principal',
+            dataIndex: 'principal'
+        },
+        {
+            title: 'Created',
+            dataIndex: 'created',
+            render: (text) => (
+                <Tooltip title={text}>
+                    <span>{moment(text).format('LL')}</span>
+                </Tooltip>
+            )
+        },
+        {
+            title: 'Offer Expiry',
+            dataIndex: 'offer_expiry',
+            render: (text) => (
+                <Tooltip title={text}>
+                    <span>{moment(text).format('LL')}</span>
+                </Tooltip>
+            )
+        },
+        {
+            title: 'Accepted',
+            dataIndex: 'accepted',
+            render: (text, record) => (record.closed ? 'Yes' : 'No')
+        },
+        {
+            title: 'Number of Payments',
+            dataIndex: 'payments'
+        },
+        {
+            title: 'Loan Status',
+            dataIndex: 'loan_status'
+        },
+        {
+            title: 'Details',
+            dataIndex: '',
+            key: 'x',
+            render: (text, record) => <Button onClick={() => handleButtonClick(record)}>Details</Button>,
+            key: 'action'
+        }
+    ];
 
     useEffect(() => {
         load_endpoint(
             user,
-            'http://127.0.0.1:8000/loans/user/self/open?perspective=borrower&recent=True',
+            'http://127.0.0.1:8000/loans/user/self/open?perspective=borrower',
             (result) => {
-                // setItems(result);
+                if (result.length > 0) {
+                    setItems(result);
+                }
                 setLoading(false);
             },
             (error) => {
@@ -309,7 +334,36 @@ const OffersToMe = () => {
 
     return (
         <div>
-            <Table columns={columns} dataSource={[]} /> {/* items */}
+            <Modal title="Offer Details" visible={isModalVisible} onOk={handleOk} onCancel={handleCancel} destroyOnClose={true}>
+                {loanDetails && (
+                    <div>
+                        <p>
+                            <strong>Principal Amount:</strong> {loanDetails.principalAmount}
+                        </p>
+                        <p>
+                            <strong>Offer Expiry:</strong> {moment(loanDetails.offerExpiry).format('LL')}
+                        </p>
+                        <h4>Loan Image:</h4>
+                        <ImageComponent ipfsLink={loanDetails.metadata.loanImageLink} size="large" />
+                        <h4>Repayment Schedule:</h4>
+                        {loanDetails.repaymentSchedule.map((payment) => (
+                            <div key={payment.paymentId}>
+                                <p>
+                                    <strong>Payment ID:</strong> {payment.paymentId}
+                                </p>
+                                <p>
+                                    <strong>Amount Due:</strong> {payment.amountDue}
+                                </p>
+                                <p>
+                                    <strong>Due Date:</strong> {moment(payment.dueDate).format('LL')}
+                                </p>
+                                <ImageComponent ipfsLink={payment.imageLink} size="small" />
+                            </div>
+                        ))}
+                    </div>
+                )}
+            </Modal>
+            <Table columns={loanOfferColumns} dataSource={items} />
         </div>
     );
 };
