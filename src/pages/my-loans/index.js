@@ -9,6 +9,7 @@ import moment from 'moment';
 
 // project import
 import { useAuth } from 'pages/authentication/auth-forms/AuthProvider';
+import ImageComponent from 'components/ImageUUID';
 
 // react
 import { useNavigate } from 'react-router-dom';
@@ -342,6 +343,8 @@ const OffersToMe = () => {
                         <p>
                             <strong>Offer Expiry:</strong> {moment(loanDetails.offerExpiry).format('LL')}
                         </p>
+                        <h4>Loan Image:</h4>
+                        <ImageComponent ipfsLink={loanDetails.metadata.loanImageLink} size="large" />
                         <h4>Repayment Schedule:</h4>
                         {loanDetails.repaymentSchedule.map((payment) => (
                             <div key={payment.paymentId}>
@@ -354,6 +357,7 @@ const OffersToMe = () => {
                                 <p>
                                     <strong>Due Date:</strong> {moment(payment.dueDate).format('LL')}
                                 </p>
+                                <ImageComponent ipfsLink={payment.imageLink} size="small" />
                             </div>
                         ))}
                     </div>
