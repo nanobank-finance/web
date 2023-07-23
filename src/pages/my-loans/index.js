@@ -225,11 +225,29 @@ const OffersToMe = () => {
     const { user, loading } = useAuth();
     const [record, setRecord] = useState(null);
     const [isModalVisible, setIsModalVisible] = useState(false);
+    const [loanDetails, setLoanDetails] = useState(null);
+    const loadLoanDetails = async (loanId) => {
+        setLoading(true);
+        const result = await fetch(`http://127.0.0.1:8000/loan?loan_id=${loanId}`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${user.token}`,
+                'X-User-Uid': user.uid
+            }
+        }).then((res) => res.json());
 
-    const handleButtonClick = (record) => {
+        setLoanDetails(result);
+        setLoading(false);
+    };
+
+    const handleButtonClick = async (record) => {
         console.log('Button was clicked for record: ', record);
         setRecord(record); // set the record
         setIsModalVisible(true); // show the modal
+
+        // Load loan details when modal is opened
+        await loadLoanDetails(record.loan);
     };
 
     const handleCancel = () => {
@@ -237,35 +255,6 @@ const OffersToMe = () => {
     };
 
     const handleOk = () => {
-        // const values = form.getFieldsValue();
-        // const startDate = dayjs(values.start);
-        // const expiryDate = dayjs(values.expiry);
-        // const maturityDate = dayjs(values.maturity);
-
-        // if (expiryDate.isAfter(startDate)) {
-        //     Modal.error({
-        //         title: 'Error',
-        //         content: 'The start date must be after the offer expiry date.'
-        //     });
-        //     return;
-        // }
-
-        // if (startDate.isAfter(maturityDate)) {
-        //     Modal.error({
-        //         title: 'Error',
-        //         content: 'The start date must be before the maturity date.'
-        //     });
-        //     return;
-        // }
-
-        // form.validateFields()
-        //     .then((values) => {
-        //         form.resetFields();
-        //         createLoanOffer(values, user);
-        //     })
-        //     .catch((info) => {
-        //         console.log('Validate Failed:', info);
-        //     });
         return;
     };
 
@@ -345,7 +334,30 @@ const OffersToMe = () => {
     return (
         <div>
             <Modal title="Offer Details" visible={isModalVisible} onOk={handleOk} onCancel={handleCancel} destroyOnClose={true}>
-                <div />
+                {loanDetails && (
+                    <div>
+                        <p>
+                            <strong>Principal Amount:</strong> {loanDetails.principalAmount}
+                        </p>
+                        <p>
+                            <strong>Offer Expiry:</strong> {moment(loanDetails.offerExpiry).format('LL')}
+                        </p>
+                        <h4>Repayment Schedule:</h4>
+                        {loanDetails.repaymentSchedule.map((payment) => (
+                            <div key={payment.paymentId}>
+                                <p>
+                                    <strong>Payment ID:</strong> {payment.paymentId}
+                                </p>
+                                <p>
+                                    <strong>Amount Due:</strong> {payment.amountDue}
+                                </p>
+                                <p>
+                                    <strong>Due Date:</strong> {moment(payment.dueDate).format('LL')}
+                                </p>
+                            </div>
+                        ))}
+                    </div>
+                )}
             </Modal>
             <Table columns={loanOfferColumns} dataSource={items} />
         </div>
