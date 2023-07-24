@@ -5,13 +5,26 @@ import PropTypes from 'prop-types';
 const defaultOptions = {
     chart: {
         type: 'line',
-        height: 350
+        height: 350,
+        stacked: false
+    },
+    stroke: {
+        curve: 'smooth'
+    },
+    plotOptions: {
+        bar: {
+            columnWidth: '10%'
+        }
     },
     xaxis: {
         type: 'datetime'
     },
-    stroke: {
-        curve: 'smooth'
+    yaxis: {
+        labels: {
+            formatter: (value) => {
+                return value.toFixed(2); // Sets the float precision of y-axis labels to 2 decimal places
+            }
+        }
     }
 };
 
@@ -23,12 +36,19 @@ const LoanRepaymentChart = ({ data }) => {
         if (data) {
             setSeries([
                 {
-                    name: 'Amount Due',
-                    data: data.map(({ x, y }) => ({ x: x.getTime(), y }))
+                    name: 'Payment Due',
+                    data: data.map(({ x, y }) => ({ x: x, y: y })),
+                    type: 'column'
                 },
                 {
-                    name: 'Cumulative Amount',
-                    data: data.map(({ x, yCumulative }) => ({ x: x.getTime(), y: yCumulative }))
+                    name: 'Cumulative Interest Paid',
+                    data: data.map(({ x, interest }) => ({ x: x.getTime(), y: interest })),
+                    type: 'line'
+                },
+                {
+                    name: 'Cumulative Debt',
+                    data: data.map(({ x, yCumulative }) => ({ x: x.getTime(), y: yCumulative })),
+                    type: 'line'
                 }
             ]);
         }
@@ -42,6 +62,7 @@ LoanRepaymentChart.propTypes = {
         PropTypes.shape({
             x: PropTypes.instanceOf(Date),
             y: PropTypes.number,
+            interest: PropTypes.number,
             yCumulative: PropTypes.number
         })
     )

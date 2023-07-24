@@ -170,7 +170,7 @@ const Applications = () => {
         const loanOffer = {
             borrower,
             principal,
-            interest: values.interest * 1.0, // Convert to float
+            interest: values.interest / 100.0, // Convert to a percentage
             payments: values.payments,
             start: startDate,
             expiry: expiryDate,

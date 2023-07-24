@@ -35,15 +35,31 @@ const LoanDetails = () => {
         return <div>Loading...</div>;
     }
 
-    const paymentData = loanData.repaymentSchedule.map((payment, index) => ({
-        x: new Date(payment.dueDate),
-        y: payment.amountDue,
-        yCumulative: loanData.principalAmount - loanData.repaymentSchedule.slice(0, index + 1).reduce((sum, p) => sum + p.amountDue, 0)
-    }));
+    console.log(loanData);
+
+    const paymentData = loanData.repaymentSchedule.map((payment, index) => {
+        // Assuming the amountDue for each payment includes both principal and interest,
+        // we compute the cumulative total paid up to the current index
+        const cumulativePaid = loanData.repaymentSchedule.slice(0, index + 1).reduce((sum, p) => sum + p.amountDue, 0);
+
+        // The cumulative principal paid is the initial loan amount divided by the number of total payments, times the number of payments made
+        const cumulativePrincipalPaid = (loanData.principalAmount / loanData.repaymentSchedule.length) * (index + 1);
+
+        // The cumulative interest paid is the difference between the cumulative total paid and the cumulative principal paid
+        const cumulativeInterestPaid = cumulativePaid - cumulativePrincipalPaid;
+
+        // The remaining debt is the total of all payments minus the cumulative total paid
+        const remainingDebt = loanData.repaymentSchedule.reduce((sum, p) => sum + p.amountDue, 0) - cumulativePaid;
+
+        return {
+            x: new Date(payment.dueDate),
+            y: payment.amountDue,
+            interest: cumulativeInterestPaid,
+            yCumulative: remainingDebt
+        };
+    });
 
     console.log(paymentData);
-    console.log(paymentData.map(({ x, y }) => ({ x, y })));
-    console.log(paymentData.map(({ x, yCumulative }) => ({ x, y: yCumulative })));
 
     return (
         <Grid container spacing={3}>
