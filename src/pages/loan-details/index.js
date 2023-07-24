@@ -6,6 +6,7 @@ import { useParams } from 'react-router-dom';
 import { useAuth } from 'pages/authentication/auth-forms/AuthProvider';
 import { useState, useEffect } from 'react';
 import ImageComponent from 'components/ImageUUID';
+import LoanRepaymentChart from 'pages/loan-details/LoanRepaymentChart';
 
 const LoanDetails = () => {
     const { loanId } = useParams();
@@ -40,61 +41,58 @@ const LoanDetails = () => {
         yCumulative: loanData.principalAmount - loanData.repaymentSchedule.slice(0, index + 1).reduce((sum, p) => sum + p.amountDue, 0)
     }));
 
+    console.log(paymentData);
+    console.log(paymentData.map(({ x, y }) => ({ x, y })));
+    console.log(paymentData.map(({ x, yCumulative }) => ({ x, y: yCumulative })));
+
     return (
-        loanData && (
-            <Grid container spacing={3}>
-                <Grid item xs={12}>
-                    <Paper>
-                        <Grid container>
-                            <Grid item xs={3}>
-                                <ImageComponent ipfsLink={loanData.metadata.loanImageLink} size="large" />
-                            </Grid>
-                            <Grid item xs={9}>
-                                <Typography variant="h5">Principal Amount: {loanData.principalAmount}</Typography>
-                            </Grid>
+        <Grid container spacing={3}>
+            <Grid item xs={12}>
+                <Paper>
+                    <Grid container>
+                        <Grid item xs={3}>
+                            <ImageComponent ipfsLink={loanData.metadata.loanImageLink} size="large" />
                         </Grid>
-                    </Paper>
-                </Grid>
-
-                <Grid item xs={12}>
-                    <Paper>
-                        <Typography variant="h6">Repayment Schedule</Typography>
-                        <XYPlot xType="time" width={1000} height={500}>
-                            <XAxis title="Due Date" />
-                            <YAxis title="Amount Due" />
-                            <VerticalBarSeries data={paymentData.map(({ x, y }) => ({ x, y }))} />
-                            <LineSeries data={paymentData.map(({ x, yCumulative }) => ({ x, y: yCumulative }))} />
-                        </XYPlot>
-                    </Paper>
-                </Grid>
-
-                <Grid item xs={12}>
-                    <Paper>
-                        <Typography variant="h6">Payment Details</Typography>
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>ID Image</th>
-                                    <th>Amount Due</th>
-                                    <th>Due Date</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {loanData.repaymentSchedule.map((payment) => (
-                                    <tr key={payment.paymentId}>
-                                        <td>
-                                            <ImageComponent ipfsLink={payment.imageLink} />
-                                        </td>
-                                        <td>{payment.amountDue}</td>
-                                        <td>{new Date(payment.dueDate).toLocaleDateString()}</td>
-                                    </tr>
-                                ))}
-                            </tbody>
-                        </table>
-                    </Paper>
-                </Grid>
+                        <Grid item xs={9}>
+                            <Typography variant="h5">Principal Amount: {loanData.principalAmount}</Typography>
+                        </Grid>
+                    </Grid>
+                </Paper>
             </Grid>
-        )
+
+            <Grid item xs={12}>
+                <Paper>
+                    <Typography variant="h6">Repayment Schedule</Typography>
+                    <LoanRepaymentChart data={paymentData} />
+                </Paper>
+            </Grid>
+
+            <Grid item xs={12}>
+                <Paper>
+                    <Typography variant="h6">Payment Details</Typography>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>ID Image</th>
+                                <th>Amount Due</th>
+                                <th>Due Date</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {loanData.repaymentSchedule.map((payment) => (
+                                <tr key={payment.paymentId}>
+                                    <td>
+                                        <ImageComponent ipfsLink={payment.imageLink} />
+                                    </td>
+                                    <td>{payment.amountDue}</td>
+                                    <td>{new Date(payment.dueDate).toLocaleDateString()}</td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                </Paper>
+            </Grid>
+        </Grid>
     );
 };
 
