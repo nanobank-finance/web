@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useContext } from 'react';
 
 // material-ui
 import { Grid } from '@mui/material';
@@ -9,6 +9,8 @@ import dayjs from 'dayjs';
 
 // project import
 import { useAuth } from 'pages/authentication/auth-forms/AuthProvider';
+import secureStorage from 'utils/secureStorage';
+import nanobyte_api_key from 'layout/MainLayout/Header/HeaderContent/Profile';
 
 // react
 import { useNavigate } from 'react-router-dom';
@@ -120,6 +122,7 @@ const Applications = () => {
     const [maturityDate, setMaturityDate] = useState(null);
     const [startDate, setStartDate] = useState(null);
     const [record, setRecord] = useState(null);
+    const [transactionStatus, setTransactionStatus] = useState(null);
     const { user, loading } = useAuth();
 
     const handleOfferCancel = () => {
@@ -158,14 +161,14 @@ const Applications = () => {
             });
     };
 
-    // Create loan offer function
-    const createLoanOffer = (values, user) => {
+    const createLoanOffer = async (values, user) => {
         console.log(values);
         const borrower = record.borrower; // Pull borrower from record
         const principal = record.amount_asking; // Pull principal from record
         const startDate = dayjs(values.start).valueOf();
         const expiryDate = dayjs(values.expiry).valueOf();
         const maturityDate = dayjs(values.maturity).valueOf();
+        const walletSessionKey = secureStorage.get('walletSessionKey');
 
         const loanOffer = {
             borrower,
@@ -177,25 +180,57 @@ const Applications = () => {
             maturity: maturityDate
         };
 
-        fetch('http://localhost:8000/loan', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                Authorization: `Bearer ${user.token}`,
-                'X-User-Uid': `${user.uid}`
-            },
-            body: JSON.stringify(loanOffer)
-        })
-            .then((res) => res.json())
-            .then(
-                (result) => {
-                    console.log(result);
-                    setIsOfferModalVisible(false);
+        try {
+            const response = await fetch('http://localhost:8000/loan', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${user.token}`,
+                    'X-User-Uid': `${user.uid}`
                 },
-                (error) => {
-                    console.log(error);
+                body: JSON.stringify(loanOffer)
+            });
+
+            const result = await response.json();
+            console.log(result);
+
+            // Create payment
+            const paymentDetails = {
+                amount: principal,
+                currency: 'NANO'
+            };
+
+            const paymentData = await nanobyte.requestPayment(nanobyte_api_key, walletSessionKey, JSON.stringify(paymentDetails));
+            console.log(paymentData);
+
+            // Set transactionStatus to 'pending'
+            setTransactionStatus('pending');
+            // Create a function for verification of payment
+            const verifyPayment = async (paymentId) => {
+                try {
+                    const data = await nanobyte.verifyPayment(nanobyte_api_key, paymentId);
+                    console.log(data);
+                    if (data) {
+                        return data.paymentStatus;
+                    }
+                } catch (error) {
+                    console.error(error);
                 }
-            );
+                return null;
+            };
+
+            // Listen for the transaction to go through
+            const interval = setInterval(async () => {
+                const status = await verifyPayment(paymentData.paymentId); // Pass the payment id that you received from the payment request
+                if (status === 'completed') {
+                    clearInterval(interval);
+                    setTransactionStatus('completed');
+                    setIsOfferModalVisible(false);
+                }
+            }, 5000); // check every 5 seconds
+        } catch (error) {
+            console.log(error);
+        }
     };
 
     const handleButtonClick = (record) => {

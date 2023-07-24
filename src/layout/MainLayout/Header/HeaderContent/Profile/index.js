@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import nanobyte from 'nanobyte-provider';
@@ -28,6 +28,7 @@ import MainCard from 'components/MainCard';
 import Transitions from 'components/@extended/Transitions';
 import ProfileTab from './ProfileTab';
 import SettingTab from './SettingTab';
+import secureStorage from 'utils/secureStorage';
 
 // assets
 import avatar1 from 'assets/images/users/avatar-1.png';
@@ -75,6 +76,8 @@ const StyledButton = styled(Button)({
     }
 });
 
+export const nanobyte_api_key = 'hUDPS3l9vvtX85fSGGaGxxDHmrgUVtCE';
+
 const Profile = () => {
     const theme = useTheme();
 
@@ -115,15 +118,9 @@ const Profile = () => {
 
     const connectWallet = async () => {
         try {
-            const data = await nanobyte.connect('hUDPS3l9vvtX85fSGGaGxxDHmrgUVtCE');
+            const data = await nanobyte.connect(nanobyte_api_key);
             console.log(data);
-            const connectedData = {
-                nonce: data.nonce,
-                signature: data.signature,
-                status: data.status,
-                account: data.account,
-                sessionKey: data.sessionKey
-            };
+            secureStorage.set('walletSessionKey', data.sessionKey);
         } catch (error) {
             console.error(error);
         }
