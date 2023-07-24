@@ -49,62 +49,69 @@ const LoanDetails = () => {
 
     return (
         <Box pt={2} px={2}>
-            <Typography variant="h4">Loan Details</Typography>
+            <Grid item xs={12}>
+                <Grid container alignItems="center" spacing={2}>
+                    <Grid item>
+                        <ImageComponent ipfsLink={loanData.metadata.loanImageLink} size="medium" />
+                    </Grid>
+                    <Grid item>
+                        <Typography variant="h4">Loan Details</Typography>
+                    </Grid>
+                </Grid>
+            </Grid>
             <Grid container spacing={3}>
                 <Grid item xs={12}>
                     <Paper>
-                        <Box p={2}>
+                        <Box m={500}>
                             <Grid container>
-                                <Grid item xs={3}>
-                                    <Box m={1}>
-                                        <ImageComponent ipfsLink={loanData.metadata.loanImageLink} size="medium" />
-                                    </Box>
-                                </Grid>
-                                <Grid item xs={9}>
+                                <Grid item m={500}>
                                     <Typography variant="h5">Principal Amount: {loanData.principalAmount}</Typography>
                                 </Grid>
                             </Grid>
                         </Box>
                     </Paper>
                 </Grid>
-
+                <Typography variant="h6">Repayment Schedule</Typography>
                 <Grid item xs={12}>
                     <Paper>
-                        <Box p={2}>
-                            <Typography variant="h6">Repayment Schedule</Typography>
-                            <LoanRepaymentChart data={paymentData} />
+                        <Box m={500}>
+                            <Box m={500}>
+                                <LoanRepaymentChart data={paymentData} />
+                            </Box>
                         </Box>
                     </Paper>
                 </Grid>
 
+                <Typography variant="h6">Payment Details</Typography>
                 <Grid item xs={12}>
                     <Paper>
-                        <Box p={2}>
-                            <Typography variant="h6">Payment Details</Typography>
-                            <TableContainer>
-                                <Table>
-                                    <TableHead>
-                                        <TableRow>
-                                            <TableCell>ID Image</TableCell>
-                                            <TableCell>Amount Due</TableCell>
-                                            <TableCell>Due Date</TableCell>
-                                        </TableRow>
-                                    </TableHead>
-                                    <TableBody>
-                                        {loanData.repaymentSchedule.map((payment) => (
-                                            <TableRow key={payment.paymentId}>
-                                                <TableCell>
-                                                    <Box m={1}>
-                                                        <ImageComponent ipfsLink={payment.imageLink} size="medium" />
-                                                    </Box>
-                                                </TableCell>
-                                                <TableCell>{payment.amountDue}</TableCell>
-                                                <TableCell>{new Date(payment.dueDate).toLocaleDateString()}</TableCell>
+                        <Box m={500}>
+                            <Box m={500}>
+                                <TableContainer>
+                                    <Table>
+                                        <TableHead>
+                                            <TableRow>
+                                                <TableCell>ID Image</TableCell>
+                                                <TableCell>Amount Due</TableCell>
+                                                <TableCell>Due Date</TableCell>
                                             </TableRow>
-                                        ))}
-                                    </TableBody>
-                                </Table>
-                            </TableContainer>
+                                        </TableHead>
+                                        <TableBody>
+                                            {loanData.repaymentSchedule.map((payment) => (
+                                                <TableRow key={payment.paymentId}>
+                                                    <TableCell>
+                                                        <Box m={1}>
+                                                            <ImageComponent ipfsLink={payment.imageLink} size="medium" />
+                                                        </Box>
+                                                    </TableCell>
+                                                    <TableCell>{payment.amountDue}</TableCell>
+                                                    <TableCell>{new Date(payment.dueDate).toLocaleDateString()}</TableCell>
+                                                </TableRow>
+                                            ))}
+                                        </TableBody>
+                                    </Table>
+                                </TableContainer>
+                            </Box>
                         </Box>
                     </Paper>
                 </Grid>
