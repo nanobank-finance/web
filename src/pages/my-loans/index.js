@@ -227,28 +227,13 @@ const OffersToMe = () => {
     const [record, setRecord] = useState(null);
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [loanDetails, setLoanDetails] = useState(null);
-    const loadLoanDetails = async (loanId) => {
-        setLoading(true);
-        const result = await fetch(`http://127.0.0.1:8000/loan?loan_id=${loanId}`, {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-                Authorization: `Bearer ${user.token}`,
-                'X-User-Uid': user.uid
-            }
-        }).then((res) => res.json());
-
-        setLoanDetails(result);
-        setLoading(false);
-    };
+    const navigate = useNavigate();
 
     const handleButtonClick = async (record) => {
         console.log('Button was clicked for record: ', record);
-        setRecord(record); // set the record
-        setIsModalVisible(true); // show the modal
 
-        // Load loan details when modal is opened
-        await loadLoanDetails(record.loan);
+        // Navigate to LoanDetails page
+        navigate(`/loans/${record.loan}`);
     };
 
     const handleCancel = () => {

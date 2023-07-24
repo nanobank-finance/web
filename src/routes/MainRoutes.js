@@ -9,6 +9,7 @@ const OnboardPage = Loadable(lazy(() => import('pages/onboard')));
 const MyLoans = Loadable(lazy(() => import('pages/my-loans')));
 const BillPay = Loadable(lazy(() => import('pages/bill-pay')));
 const Credit = Loadable(lazy(() => import('pages/credit')));
+const LoanDetails = Loadable(lazy(() => import('pages/loan-details')));
 
 const MainRoutes = [
     {
@@ -68,6 +69,14 @@ const MainRoutes = [
                 element: (
                     <PrivateRoute>
                         <Credit />
+                    </PrivateRoute>
+                )
+            },
+            {
+                path: 'loans/:loanId',
+                element: (
+                    <PrivateRoute>
+                        <LoanDetails />
                     </PrivateRoute>
                 )
             }
