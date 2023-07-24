@@ -1,16 +1,44 @@
 import React, { useState, useEffect } from 'react';
-import { Typography, Grid, Paper, Box, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from '@material-ui/core';
-import { XYPlot, XAxis, YAxis, VerticalBarSeries, LineSeries } from 'react-vis';
+import { Typography, Grid, Paper, Box, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Button } from '@material-ui/core';
 import { useParams } from 'react-router-dom';
 import { useAuth } from 'pages/authentication/auth-forms/AuthProvider';
 import ImageComponent from 'components/ImageUUID';
 import LoanRepaymentChart from 'pages/loan-details/LoanRepaymentChart';
+
+const LoanStatusType = {
+    PENDING_ACCEPTANCE: 1,
+    EXPIRED_UNACCEPTED: 2,
+    ACCEPTED: 3
+};
+
+const useCountdown = (endDate) => {
+    const [timeLeft, setTimeLeft] = useState();
+
+    useEffect(() => {
+        const timer = setInterval(() => {
+            const now = new Date();
+            const timeDifference = endDate - now;
+            const seconds = Math.floor((timeDifference / 1000) % 60);
+            const minutes = Math.floor((timeDifference / 1000 / 60) % 60);
+            const hours = Math.floor((timeDifference / (1000 * 60 * 60)) % 24);
+            const days = Math.floor(timeDifference / (1000 * 60 * 60 * 24));
+            setTimeLeft({ days, hours, minutes, seconds });
+        }, 1000);
+
+        return () => clearInterval(timer);
+    }, [endDate]);
+
+    return timeLeft;
+};
 
 const LoanDetails = () => {
     const { loanId } = useParams();
     const { user } = useAuth();
 
     const [loanData, setLoanData] = useState(null);
+
+    const offerExpiryDate = loanData ? new Date(loanData.offerExpiry) : new Date('2099-01-01');
+    const timeLeft = useCountdown(offerExpiryDate);
 
     useEffect(() => {
         const loadLoanDetails = async () => {
@@ -47,6 +75,12 @@ const LoanDetails = () => {
         };
     });
 
+    const totalRepayment = loanData.repaymentSchedule.reduce((sum, payment) => sum + payment.amountDue, 0);
+    const interestRate = (totalRepayment - loanData.principalAmount) / loanData.principalAmount;
+    const offerExpired = new Date() > new Date(loanData.offerExpiry);
+    const headerTitle = loanData.metadata.loan_status === LoanStatusType.PENDING_ACCEPTANCE ? 'Loan Offer' : 'Loan Details';
+    const acceptButtonVisible = loanData.metadata.loan_status === LoanStatusType.PENDING_ACCEPTANCE && !offerExpired;
+
     return (
         <Box pt={2} px={2}>
             <Grid item xs={12}>
@@ -55,22 +89,25 @@ const LoanDetails = () => {
                         <ImageComponent ipfsLink={loanData.metadata.loanImageLink} size="medium" />
                     </Grid>
                     <Grid item>
-                        <Typography variant="h4">Loan Details</Typography>
+                        <Typography variant="h4">{headerTitle}</Typography>
+                        <Typography variant="h5">Principal Amount: {loanData.principalAmount}</Typography>
+                        <Typography variant="h5">Interest Rate: {interestRate.toFixed(2)}%</Typography>
+                        {!offerExpired && timeLeft && (
+                            <Typography variant="h6">
+                                Offer expires in:
+                                {`${timeLeft.days} days, ${timeLeft.hours} hours, ${timeLeft.minutes} minutes, ${timeLeft.seconds} seconds`}
+                            </Typography>
+                        )}
+                        {offerExpired && <Typography variant="h6">Offer Expired</Typography>}
+                        {acceptButtonVisible && (
+                            <Button variant="contained" color="primary">
+                                Accept Offer
+                            </Button>
+                        )}
                     </Grid>
                 </Grid>
             </Grid>
             <Grid container spacing={3}>
-                <Grid item xs={12}>
-                    <Paper>
-                        <Box m={500}>
-                            <Grid container>
-                                <Grid item m={500}>
-                                    <Typography variant="h5">Principal Amount: {loanData.principalAmount}</Typography>
-                                </Grid>
-                            </Grid>
-                        </Box>
-                    </Paper>
-                </Grid>
                 <Typography variant="h6">Repayment Schedule</Typography>
                 <Grid item xs={12}>
                     <Paper>
@@ -94,6 +131,9 @@ const LoanDetails = () => {
                                                 <TableCell>ID Image</TableCell>
                                                 <TableCell>Amount Due</TableCell>
                                                 <TableCell>Due Date</TableCell>
+                                                <TableCell>
+                                                    {loanData.metadata.loan_status === LoanStatusType.ACCEPTED ? 'Make Payment' : ''}
+                                                </TableCell>
                                             </TableRow>
                                         </TableHead>
                                         <TableBody>
@@ -106,6 +146,15 @@ const LoanDetails = () => {
                                                     </TableCell>
                                                     <TableCell>{payment.amountDue}</TableCell>
                                                     <TableCell>{new Date(payment.dueDate).toLocaleDateString()}</TableCell>
+                                                    <TableCell>
+                                                        {loanData.metadata.loan_status === LoanStatusType.ACCEPTED ? (
+                                                            <Button variant="contained" color="primary">
+                                                                Pay Now
+                                                            </Button>
+                                                        ) : (
+                                                            ''
+                                                        )}
+                                                    </TableCell>
                                                 </TableRow>
                                             ))}
                                         </TableBody>
