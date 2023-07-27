@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useContext } from 'react';
 
 // material-ui
 import { Grid } from '@mui/material';
@@ -9,6 +9,9 @@ import dayjs from 'dayjs';
 
 // project import
 import { useAuth } from 'pages/authentication/auth-forms/AuthProvider';
+import secureStorage from 'utils/secureStorage';
+import nanobyte from 'nanobyte-provider';
+import nanobyte_api_key from 'layout/MainLayout/Header/HeaderContent/Profile';
 
 // react
 import { useNavigate } from 'react-router-dom';
@@ -120,7 +123,9 @@ const Applications = () => {
     const [maturityDate, setMaturityDate] = useState(null);
     const [startDate, setStartDate] = useState(null);
     const [record, setRecord] = useState(null);
+    const [transactionStatus, setTransactionStatus] = useState(null);
     const { user, loading } = useAuth();
+    const navigation = useNavigate();
 
     const handleOfferCancel = () => {
         setIsOfferModalVisible(false);
@@ -158,44 +163,43 @@ const Applications = () => {
             });
     };
 
-    // Create loan offer function
-    const createLoanOffer = (values, user) => {
+    const createLoanOffer = async (values, user) => {
         console.log(values);
         const borrower = record.borrower; // Pull borrower from record
         const principal = record.amount_asking; // Pull principal from record
         const startDate = dayjs(values.start).valueOf();
         const expiryDate = dayjs(values.expiry).valueOf();
         const maturityDate = dayjs(values.maturity).valueOf();
+        const walletSessionKey = secureStorage.get('walletSessionKey');
 
         const loanOffer = {
             borrower,
             principal,
-            interest: values.interest * 1.0, // Convert to float
+            interest: values.interest / 100.0, // Convert to a percentage
             payments: values.payments,
             start: startDate,
             expiry: expiryDate,
             maturity: maturityDate
         };
 
-        fetch('http://localhost:8000/loan', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                Authorization: `Bearer ${user.token}`,
-                'X-User-Uid': `${user.uid}`
-            },
-            body: JSON.stringify(loanOffer)
-        })
-            .then((res) => res.json())
-            .then(
-                (result) => {
-                    console.log(result);
-                    setIsOfferModalVisible(false);
+        try {
+            // Send the loan offer to the backend
+            const response = await fetch('http://localhost:8000/loan', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${user.token}`,
+                    'X-User-Uid': `${user.uid}`
                 },
-                (error) => {
-                    console.log(error);
-                }
-            );
+                body: JSON.stringify(loanOffer)
+            });
+
+            const result = await response.json();
+
+            navigation.navigate(`/loan/${result.metadata.loan}`);
+        } catch (error) {
+            console.log(error);
+        }
     };
 
     const handleButtonClick = (record) => {
