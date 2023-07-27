@@ -10,6 +10,7 @@ import dayjs from 'dayjs';
 // project import
 import { useAuth } from 'pages/authentication/auth-forms/AuthProvider';
 import secureStorage from 'utils/secureStorage';
+import nanobyte from 'nanobyte-provider';
 import nanobyte_api_key from 'layout/MainLayout/Header/HeaderContent/Profile';
 
 // react
@@ -124,6 +125,7 @@ const Applications = () => {
     const [record, setRecord] = useState(null);
     const [transactionStatus, setTransactionStatus] = useState(null);
     const { user, loading } = useAuth();
+    const navigation = useNavigate();
 
     const handleOfferCancel = () => {
         setIsOfferModalVisible(false);
@@ -181,6 +183,7 @@ const Applications = () => {
         };
 
         try {
+            // Send the loan offer to the backend
             const response = await fetch('http://localhost:8000/loan', {
                 method: 'POST',
                 headers: {
@@ -192,42 +195,8 @@ const Applications = () => {
             });
 
             const result = await response.json();
-            console.log(result);
 
-            // Create payment
-            const paymentDetails = {
-                amount: principal,
-                currency: 'NANO'
-            };
-
-            const paymentData = await nanobyte.requestPayment(nanobyte_api_key, walletSessionKey, JSON.stringify(paymentDetails));
-            console.log(paymentData);
-
-            // Set transactionStatus to 'pending'
-            setTransactionStatus('pending');
-            // Create a function for verification of payment
-            const verifyPayment = async (paymentId) => {
-                try {
-                    const data = await nanobyte.verifyPayment(nanobyte_api_key, paymentId);
-                    console.log(data);
-                    if (data) {
-                        return data.paymentStatus;
-                    }
-                } catch (error) {
-                    console.error(error);
-                }
-                return null;
-            };
-
-            // Listen for the transaction to go through
-            const interval = setInterval(async () => {
-                const status = await verifyPayment(paymentData.paymentId); // Pass the payment id that you received from the payment request
-                if (status === 'completed') {
-                    clearInterval(interval);
-                    setTransactionStatus('completed');
-                    setIsOfferModalVisible(false);
-                }
-            }, 5000); // check every 5 seconds
+            navigation.navigate(`/loan/${result.metadata.loan}`);
         } catch (error) {
             console.log(error);
         }

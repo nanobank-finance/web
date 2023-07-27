@@ -4,11 +4,15 @@ import { useParams } from 'react-router-dom';
 import { useAuth } from 'pages/authentication/auth-forms/AuthProvider';
 import ImageComponent from 'components/ImageUUID';
 import LoanRepaymentChart from 'pages/loan-details/LoanRepaymentChart';
+import secureStorage from 'utils/secureStorage';
+import nanobyte from 'nanobyte-provider';
+import { nanobyte_api_key } from 'layout/MainLayout/Header/HeaderContent/Profile';
 
 const LoanStatusType = {
     PENDING_ACCEPTANCE: 1,
     EXPIRED_UNACCEPTED: 2,
-    ACCEPTED: 3
+    ACCEPTED: 3,
+    DRAFT: 4
 };
 
 const useCountdown = (endDate) => {
@@ -81,6 +85,54 @@ const LoanDetails = () => {
     const headerTitle = loanData.metadata.loan_status === LoanStatusType.PENDING_ACCEPTANCE ? 'Loan Offer' : 'Loan Details';
     const acceptButtonVisible = loanData.metadata.loan_status === LoanStatusType.PENDING_ACCEPTANCE && !offerExpired;
 
+    const handlePayNow = async () => {
+        try {
+            const walletSessionKey = secureStorage.get('walletSessionKey');
+            const paymentDetails = {
+                price: '1.00',
+                currency: 'NANO',
+                label: 'Loan Payment',
+                message: 'Thank you for choosing Nano Swap!',
+                metadata: {
+                    loanId: loanId
+                }
+            };
+
+            const data = {
+                paymentDetails: paymentDetails,
+                sessionKey: walletSessionKey,
+                apiKey: nanobyte_api_key
+            };
+
+            console.log(data);
+            const paymentData = await nanobyte.requestPayment(nanobyte_api_key, walletSessionKey, paymentDetails);
+            console.log(paymentData);
+
+            // Start transaction verification
+            const interval = setInterval(async () => {
+                const status = await verifyPayment(paymentData.paymentId);
+                if (status === 'completed') {
+                    clearInterval(interval);
+
+                    // Once payment is complete, notify the backend with transaction id
+                    await fetch(`http://localhost:8000/loan/${loanId}/payment/${paymentData.paymentId}`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            Authorization: `Bearer ${user.token}`,
+                            'X-User-Uid': `${user.uid}`
+                        }
+                    });
+
+                    // Refresh loan details
+                    loadLoanDetails();
+                }
+            }, 5000);
+        } catch (error) {
+            console.log(error);
+        }
+    };
+
     return (
         <Box pt={2} px={2}>
             <Grid item xs={12}>
@@ -92,6 +144,11 @@ const LoanDetails = () => {
                         <Typography variant="h4">{headerTitle}</Typography>
                         <Typography variant="h5">Principal Amount: {loanData.principalAmount}</Typography>
                         <Typography variant="h5">Interest Rate: {interestRate.toFixed(2)}%</Typography>
+                        {loanData.metadata.loan_status === LoanStatusType.DRAFT && (
+                            <Button variant="contained" color="primary" onClick={handlePayNow}>
+                                Deposit Principal & Submit Offer
+                            </Button>
+                        )}
                         {!offerExpired && timeLeft && (
                             <Typography variant="h6">
                                 Offer expires in:
