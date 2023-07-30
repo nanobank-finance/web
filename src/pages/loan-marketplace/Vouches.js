@@ -5,6 +5,7 @@ import { Table } from 'antd';
 
 // project import
 import { useAuth } from 'pages/authentication/auth-forms/AuthProvider';
+import { load_endpoint, columns } from 'pages/my-loans';
 
 const Vouches = () => {
     const [dataLoading, setLoading] = useState(false);

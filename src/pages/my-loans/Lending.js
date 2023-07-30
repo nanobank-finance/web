@@ -8,6 +8,7 @@ import { Table } from 'antd';
 
 // project import
 import { useAuth } from 'pages/authentication/auth-forms/AuthProvider';
+import { load_endpoint, columns } from 'pages/my-loans';
 
 // react
 import { useNavigate } from 'react-router-dom';
@@ -32,7 +33,7 @@ const Lending = () => {
 
     return (
         <div>
-            <Table columns={columns} dataSource={[]} /> {/* items */}
+            <Table columns={columns} dataSource={items} />
         </div>
     );
 };

@@ -7,6 +7,7 @@ import moment from 'moment';
 // project import
 import { useAuth } from 'pages/authentication/auth-forms/AuthProvider';
 import ImageComponent from 'components/ImageUUID';
+import { load_endpoint } from 'pages/my-loans';
 
 // react
 import { useNavigate } from 'react-router-dom';

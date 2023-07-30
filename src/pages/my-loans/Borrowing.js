@@ -31,7 +31,7 @@ const Borrowing = () => {
 
     return (
         <div>
-            <Table columns={columns} dataSource={[]} /> {/* items */}
+            <Table columns={columns} dataSource={items} />
         </div>
     );
 };
