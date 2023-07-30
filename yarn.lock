@@ -2819,17 +2819,17 @@
     rc-resize-observer "^1.3.1"
     rc-util "^5.33.0"
 
-"@react-navigation/elements@^1.3.11":
-  version "1.3.11"
-  resolved "https://registry.npmjs.org/@react-navigation/elements/-/elements-1.3.11.tgz"
-  integrity sha512-o4J0g4ofJbbn68e4TpuGkuZLtq5mLll7Ndz9C4O4RvD2chchLuGQ5TycIPTKP428cz8JzuTCFqUe/ZhOPSsudw==
+"@react-navigation/elements@^1.3.18":
+  version "1.3.18"
+  resolved "https://registry.yarnpkg.com/@react-navigation/elements/-/elements-1.3.18.tgz#d8364b40276f3efb9c229c39da3b8b465f18f0a2"
+  integrity sha512-/0hwnJkrr415yP0Hf4PjUKgGyfshrvNUKFXN85Mrt1gY49hy9IwxZgrrxlh0THXkPeq8q4VWw44eHDfAcQf20Q==
 
-"@react-navigation/native-stack@^6.9.6":
-  version "6.9.6"
-  resolved "https://registry.npmjs.org/@react-navigation/native-stack/-/native-stack-6.9.6.tgz"
-  integrity sha512-Puqo5Y7MwYZvGELN73nMzaWTMdJu58stp9M809h4eoi4SzS0u/mFtypquEcW1gXdmRlDMmqXTtR/NBPSc2kLJg==
+"@react-navigation/native-stack@^6.9.13":
+  version "6.9.13"
+  resolved "https://registry.yarnpkg.com/@react-navigation/native-stack/-/native-stack-6.9.13.tgz#f308c398ee18fcd45de8ec7c04fe0641735feb31"
+  integrity sha512-ejlepMrvFneewL+XlXHHhn+6y3lwvavM4/R7XwBV0XJxCymujexK+7Vkg7UcvJ1lx4CRhOcyBSNfGmdNIHREyQ==
   dependencies:
-    "@react-navigation/elements" "^1.3.11"
+    "@react-navigation/elements" "^1.3.18"
     warn-once "^0.1.0"
 
 "@reduxjs/toolkit@^1.8.5":
