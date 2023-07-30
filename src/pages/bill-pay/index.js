@@ -1,86 +1,16 @@
 import { useState, useEffect } from 'react';
 
 // material-ui
-import {
-    Avatar,
-    AvatarGroup,
-    Box,
-    Grid,
-    List,
-    ListItemAvatar,
-    ListItemButton,
-    ListItemSecondaryAction,
-    ListItemText,
-    Stack,
-    Typography
-} from '@mui/material';
+import { Grid } from '@mui/material';
 
 // ant design
-import { Tabs, Table, Input, Button, Space } from 'antd';
+import { Tabs, Table } from 'antd';
 
 // project import
-import OrdersTable from './OrdersTable';
-import IncomeAreaChart from './IncomeAreaChart';
-import MonthlyBarChart from './MonthlyBarChart';
-import MainCard from 'components/MainCard';
-import AnalyticEcommerce from 'components/cards/statistics/AnalyticEcommerce';
 import { useAuth } from 'pages/authentication/auth-forms/AuthProvider';
-
-// assets
-import { GiftOutlined, MessageOutlined, SettingOutlined } from '@ant-design/icons';
-import avatar1 from 'assets/images/users/avatar-1.png';
-import avatar2 from 'assets/images/users/avatar-2.png';
-import avatar3 from 'assets/images/users/avatar-3.png';
-import avatar4 from 'assets/images/users/avatar-4.png';
-
-// firebase
-import {
-    getAuth,
-    getRedirectResult,
-    sendEmailVerification,
-    signInWithPopup,
-    GoogleAuthProvider,
-    TwitterAuthProvider,
-    GithubAuthProvider
-} from 'firebase/auth';
 
 // react
 import { useNavigate } from 'react-router-dom';
-
-// avatar style
-const avatarSX = {
-    width: 36,
-    height: 36,
-    fontSize: '1rem'
-};
-
-// action style
-const actionSX = {
-    mt: 0.75,
-    ml: 1,
-    top: 'auto',
-    right: 'auto',
-    alignSelf: 'flex-start',
-    transform: 'none'
-};
-
-// sales report status
-const status = [
-    {
-        value: 'today',
-        label: 'Today'
-    },
-    {
-        value: 'month',
-        label: 'This Month'
-    },
-    {
-        value: 'year',
-        label: 'This Year'
-    }
-];
-
-// ==============================|| DASHBOARD - DEFAULT ||============================== //
 
 const columns = [
     {

@@ -1,75 +1,17 @@
 import { useState, useEffect } from 'react';
 
 // material-ui
-import {
-    AvatarGroup,
-    Box,
-    Button,
-    Grid,
-    List,
-    ListItemAvatar,
-    ListItemButton,
-    ListItemSecondaryAction,
-    ListItemText,
-    Stack,
-    Typography
-} from '@mui/material';
+import { Grid } from '@mui/material';
 
 // ant design
 import { EditOutlined, EllipsisOutlined, SettingOutlined } from '@ant-design/icons';
-import { Avatar, Card, Skeleton, Switch } from 'antd';
+import { Card, Skeleton } from 'antd';
 
 // project import
 import MainCard from 'components/MainCard';
 
 // react
 import { useNavigate } from 'react-router-dom';
-
-// the firebase auth api key is intended to be public
-// https://stackoverflow.com/a/37484053
-// https://firebase.google.com/docs/web/setup#available-libraries
-const firebaseConfig = {
-    apiKey: 'AIzaSyBQ8rb3jkIsusGKhGwGm-ri9VAjoof1OKA',
-    authDomain: 'nanocryptobank.firebaseapp.com',
-    projectId: 'nanocryptobank',
-    storageBucket: 'nanocryptobank.appspot.com',
-    messagingSenderId: '950014241040',
-    appId: '1:950014241040:web:16e7f8fa0f59bcaf7b5d95',
-    measurementId: 'G-H4F5Z43EKN'
-};
-
-// avatar style
-const avatarSX = {
-    width: 36,
-    height: 36,
-    fontSize: '1rem'
-};
-
-// action style
-const actionSX = {
-    mt: 0.75,
-    ml: 1,
-    top: 'auto',
-    right: 'auto',
-    alignSelf: 'flex-start',
-    transform: 'none'
-};
-
-// sales report status
-const status = [
-    {
-        value: 'today',
-        label: 'Today'
-    },
-    {
-        value: 'month',
-        label: 'This Month'
-    },
-    {
-        value: 'year',
-        label: 'This Year'
-    }
-];
 
 // ==============================|| DASHBOARD - DEFAULT ||============================== //
 
