@@ -10,6 +10,11 @@ import moment from 'moment';
 // project import
 import { useAuth } from 'pages/authentication/auth-forms/AuthProvider';
 import ImageComponent from 'components/ImageUUID';
+import MyApplications from './MyApplications';
+import Borrowing from './Borrowing';
+import Lending from './Lending';
+import OffersFromMe from './OffersFromMe';
+import OffersToMe from './OffersToMe';
 
 // react
 import { useNavigate } from 'react-router-dom';
@@ -39,30 +44,6 @@ const columns = [
     }
 ];
 
-const loanApplicationColumns = [
-    {
-        title: 'Application ID',
-        dataIndex: 'application'
-    },
-    {
-        title: 'Borrower',
-        dataIndex: 'borrower'
-    },
-    {
-        title: 'Asking',
-        dataIndex: 'amount_asking'
-    },
-    {
-        title: 'Created',
-        dataIndex: 'created'
-    },
-    {
-        title: 'Closed',
-        dataIndex: 'closed',
-        render: (text, record) => (record.closed ? 'Yes' : 'No')
-    }
-];
-
 const load_endpoint = (user, url, success_callback, failure_callback) => {
     fetch(url, {
         method: 'GET',
@@ -82,301 +63,6 @@ const load_endpoint = (user, url, success_callback, failure_callback) => {
                 // failure_callback(error);
             }
         );
-};
-
-const Borrowing = () => {
-    const [dataLoading, setLoading] = useState(false);
-    const [items, setItems] = useState([]);
-    const { user, loading } = useAuth();
-
-    useEffect(() => {
-        load_endpoint(
-            user,
-            'http://127.0.0.1:8000/loans/user/self/accepted?perspective=borrower&recent=True',
-            (result) => {
-                // setItems(result);
-                setLoading(false);
-            },
-            (error) => {
-                setLoading(false);
-            }
-        );
-    }, []);
-
-    return (
-        <div>
-            <Table columns={columns} dataSource={[]} /> {/* items */}
-        </div>
-    );
-};
-
-const Lending = () => {
-    const [dataLoading, setLoading] = useState(false);
-    const [items, setItems] = useState([]);
-    const { user, loading } = useAuth();
-
-    useEffect(() => {
-        load_endpoint(
-            'http://127.0.0.1:8000/loans/user/self/accepted?perspective=lender&recent=True',
-            (result) => {
-                // setItems(result);
-                setLoading(false);
-            },
-            (error) => {
-                setLoading(false);
-            }
-        );
-    }, []);
-
-    return (
-        <div>
-            <Table columns={columns} dataSource={[]} /> {/* items */}
-        </div>
-    );
-};
-
-const Applications = () => {
-    const [dataLoading, setLoading] = useState(false);
-    const [items, setItems] = useState([]);
-    const { user, loading } = useAuth();
-    const [isModalVisible, setIsModalVisible] = useState(false);
-    const [form] = Form.useForm();
-
-    const createApplication = (values) => {
-        console.log(values);
-        fetch('http://localhost:8000/loan/application', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                Authorization: `Bearer ${user.token}`,
-                'X-User-Uid': `${user.uid}`
-            },
-            body: JSON.stringify(values)
-        })
-            .then((res) => res.json())
-            .then(
-                (result) => {
-                    console.log(result);
-                    setIsModalVisible(false);
-                },
-                (error) => {
-                    console.log(error);
-                }
-            );
-    };
-
-    const showModal = () => {
-        setIsModalVisible(true);
-    };
-
-    const handleOk = () => {
-        form.validateFields()
-            .then((values) => {
-                form.resetFields();
-                createApplication(values); //TODO: implement this function
-            })
-            .catch((info) => {
-                console.log('Validate Failed:', info);
-            });
-    };
-
-    const handleCancel = () => {
-        setIsModalVisible(false);
-    };
-
-    useEffect(() => {
-        load_endpoint(
-            user,
-            'http://127.0.0.1:8000/loan/application/user/self?recent=True',
-            (result) => {
-                setItems(result);
-                console.log(result);
-                setLoading(false);
-            },
-            (error) => {
-                setLoading(false);
-            }
-        );
-    }, []);
-
-    return (
-        <div>
-            <Button type="primary" onClick={showModal}>
-                New Application
-            </Button>
-            <Modal title="New Application" visible={isModalVisible} onOk={handleOk} onCancel={handleCancel} destroyOnClose={true}>
-                <Form form={form} layout="vertical">
-                    <Form.Item
-                        name="asking"
-                        label="Amount Requested"
-                        rules={[{ required: true, message: 'Please input the asking amount' }]}
-                    >
-                        <InputNumber min={0} />
-                    </Form.Item>
-                </Form>
-            </Modal>
-            <Table columns={loanApplicationColumns} dataSource={items} />
-        </div>
-    );
-};
-
-const OffersToMe = () => {
-    const [dataLoading, setLoading] = useState(false);
-    const [items, setItems] = useState([]);
-    const { user, loading } = useAuth();
-    const [record, setRecord] = useState(null);
-    const [isModalVisible, setIsModalVisible] = useState(false);
-    const [loanDetails, setLoanDetails] = useState(null);
-    const navigate = useNavigate();
-
-    const handleButtonClick = async (record) => {
-        console.log('Button was clicked for record: ', record);
-
-        // Navigate to LoanDetails page
-        navigate(`/loans/${record.loan}`);
-    };
-
-    const handleCancel = () => {
-        setIsModalVisible(false);
-    };
-
-    const handleOk = () => {
-        return;
-    };
-
-    const loanOfferColumns = [
-        {
-            title: 'Loan ID',
-            dataIndex: 'loan'
-        },
-        {
-            title: 'Borrower',
-            dataIndex: 'borrower'
-        },
-        {
-            title: 'Lender',
-            dataIndex: 'lender'
-        },
-        {
-            title: 'Principal',
-            dataIndex: 'principal'
-        },
-        {
-            title: 'Created',
-            dataIndex: 'created',
-            render: (text) => (
-                <Tooltip title={text}>
-                    <span>{moment(text).format('LL')}</span>
-                </Tooltip>
-            )
-        },
-        {
-            title: 'Offer Expiry',
-            dataIndex: 'offer_expiry',
-            render: (text) => (
-                <Tooltip title={text}>
-                    <span>{moment(text).format('LL')}</span>
-                </Tooltip>
-            )
-        },
-        {
-            title: 'Accepted',
-            dataIndex: 'accepted',
-            render: (text, record) => (record.closed ? 'Yes' : 'No')
-        },
-        {
-            title: 'Number of Payments',
-            dataIndex: 'payments'
-        },
-        {
-            title: 'Loan Status',
-            dataIndex: 'loan_status'
-        },
-        {
-            title: 'Details',
-            dataIndex: '',
-            key: 'x',
-            render: (text, record) => <Button onClick={() => handleButtonClick(record)}>Details</Button>,
-            key: 'action'
-        }
-    ];
-
-    useEffect(() => {
-        load_endpoint(
-            user,
-            'http://127.0.0.1:8000/loans/user/self/open?perspective=borrower',
-            (result) => {
-                if (result.length > 0) {
-                    setItems(result);
-                }
-                setLoading(false);
-            },
-            (error) => {
-                setLoading(false);
-            }
-        );
-    }, []);
-
-    return (
-        <div>
-            <Modal title="Offer Details" visible={isModalVisible} onOk={handleOk} onCancel={handleCancel} destroyOnClose={true}>
-                {loanDetails && (
-                    <div>
-                        <p>
-                            <strong>Principal Amount:</strong> {loanDetails.principalAmount}
-                        </p>
-                        <p>
-                            <strong>Offer Expiry:</strong> {moment(loanDetails.offerExpiry).format('LL')}
-                        </p>
-                        <h4>Loan Image:</h4>
-                        <ImageComponent ipfsLink={loanDetails.metadata.loanImageLink} size="large" />
-                        <h4>Repayment Schedule:</h4>
-                        {loanDetails.repaymentSchedule.map((payment) => (
-                            <div key={payment.paymentId}>
-                                <p>
-                                    <strong>Payment ID:</strong> {payment.paymentId}
-                                </p>
-                                <p>
-                                    <strong>Amount Due:</strong> {payment.amountDue}
-                                </p>
-                                <p>
-                                    <strong>Due Date:</strong> {moment(payment.dueDate).format('LL')}
-                                </p>
-                                <ImageComponent ipfsLink={payment.imageLink} size="small" />
-                            </div>
-                        ))}
-                    </div>
-                )}
-            </Modal>
-            <Table columns={loanOfferColumns} dataSource={items} />
-        </div>
-    );
-};
-
-const OffersFromMe = () => {
-    const [dataLoading, setLoading] = useState(false);
-    const [items, setItems] = useState([]);
-    const { user, loading } = useAuth();
-
-    useEffect(() => {
-        load_endpoint(
-            user,
-            'http://127.0.0.1:8000/loans/user/self/open?perspective=lender&recent=True',
-            (result) => {
-                // setItems(result);
-                setLoading(false);
-            },
-            (error) => {
-                setLoading(false);
-            }
-        );
-    }, []);
-
-    return (
-        <div>
-            <Table columns={columns} dataSource={[]} /> {/* items */}
-        </div>
-    );
 };
 
 const DashboardDefault = () => {
@@ -404,7 +90,7 @@ const DashboardDefault = () => {
                     {
                         label: `Open Loan Applications`,
                         key: '3',
-                        children: <Applications></Applications>
+                        children: <MyApplications></MyApplications>
                     },
                     {
                         label: `Loan Offers Received`,
@@ -423,3 +109,4 @@ const DashboardDefault = () => {
 };
 
 export default DashboardDefault;
+export { load_endpoint, columns };
