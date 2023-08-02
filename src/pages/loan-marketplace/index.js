@@ -1,15 +1,12 @@
-import { useState, useEffect, useRef, useContext } from 'react';
+import { useState } from 'react';
 
 // material-ui
 import { Grid } from '@mui/material';
 
 // ant design
-import { Tabs, Table, Button, Form, InputNumber, Modal, DatePicker, Tooltip } from 'antd';
-import dayjs from 'dayjs';
+import { Tabs } from 'antd';
 
 // project import
-import { useAuth } from 'pages/authentication/auth-forms/AuthProvider';
-import secureStorage from 'utils/secureStorage';
 import ActiveLoans from './ActiveLoans';
 import LoanOffers from './LoanOffers';
 import Vouches from './Vouches';
