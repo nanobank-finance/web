@@ -5,9 +5,30 @@ import { Table } from 'antd';
 
 // project import
 import { useAuth } from 'pages/authentication/auth-forms/AuthProvider';
-import { load_endpoint, columns } from 'pages/my-loans';
 
-const ActiveLoans = () => {
+const load_endpoint = (user, url, success_callback, failure_callback) => {
+    fetch(url, {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${user.token}`,
+            'X-User-Uid': `${user.uid}`
+        }
+    })
+        .then((res) => res.json())
+        .then(
+            (result) => {
+                success_callback(result);
+            },
+            (error) => {
+                failure_callback(error);
+            }
+        );
+};
+
+const columns = [];
+
+const Loans = () => {
     const [dataLoading, setLoading] = useState(false);
     const [items, setItems] = useState([]);
     const { user, loading } = useAuth();
@@ -15,7 +36,7 @@ const ActiveLoans = () => {
     useEffect(() => {
         load_endpoint(
             user,
-            'http://127.0.0.1:8000/loans/accepted?recent=True',
+            'http://127.0.0.1:8000/loans?recent=True',
             (result) => {
                 setItems(result);
                 setLoading(false);
@@ -33,4 +54,4 @@ const ActiveLoans = () => {
     );
 };
 
-export default ActiveLoans;
+export default Loans;
