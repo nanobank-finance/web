@@ -6,6 +6,7 @@ import { Table } from 'antd';
 // project import
 import { useAuth } from 'pages/authentication/auth-forms/AuthProvider';
 import load_endpoint from 'utils/load_endpoint';
+import CreateLoanButton from 'components/CreateLoanButton';
 
 const columns = [];
 
@@ -30,6 +31,12 @@ const Applications = () => {
 
     return (
         <div>
+            <CreateLoanButton
+                user={user}
+                afterCreate={() => {
+                    /* TODO: logic if needed after creating a loan, like refreshing the data */
+                }}
+            />
             <Table columns={columns} dataSource={[]} />
         </div>
     );

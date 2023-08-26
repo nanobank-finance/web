@@ -30,7 +30,7 @@ const Loans = () => {
 
     return (
         <div>
-            <Table columns={columns} dataSource={[]} />
+            <Table columns={columns} dataSource={items} />
         </div>
     );
 };
