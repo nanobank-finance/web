@@ -6,6 +6,7 @@ import ModalButton from './ModalButton';
 const CreateApplicationButton = ({ user, afterCreate }) => {
     const [form] = Form.useForm();
     const [isModalVisible, setIsModalVisible] = useState(false);
+    const [loading, setLoading] = useState(false);
 
     const addKeys = (items) => {
         // Add key prop to each item in the array

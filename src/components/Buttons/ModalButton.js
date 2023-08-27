@@ -1,8 +1,7 @@
-// components/ModalButton.js
 import React, { useState } from 'react';
-import { Button, Modal } from 'antd';
+import { Button, Modal, Spin } from 'antd';
 
-const ModalButton = ({ buttonText, modalTitle, modalContent, onOk, onCancel, buttonType = 'primary' }) => {
+const ModalButton = ({ buttonText, modalTitle, modalContent, onOk, onCancel, buttonType = 'primary', loading }) => {
     const [isModalVisible, setIsModalVisible] = useState(false);
 
     const handleModalShow = () => {
@@ -21,11 +20,11 @@ const ModalButton = ({ buttonText, modalTitle, modalContent, onOk, onCancel, but
 
     return (
         <>
-            <Button type={buttonType} onClick={handleModalShow}>
+            <Button type={buttonType} onClick={handleModalShow} loading={loading}>
                 {buttonText}
             </Button>
-            <Modal title={modalTitle} visible={isModalVisible} onOk={handleModalOk} onCancel={handleModalHide}>
-                {modalContent}
+            <Modal title={modalTitle} visible={isModalVisible} onOk={handleModalOk} onCancel={handleModalHide} confirmLoading={loading}>
+                <Spin spinning={loading}>{modalContent}</Spin>
             </Modal>
         </>
     );

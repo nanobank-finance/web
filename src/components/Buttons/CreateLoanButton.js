@@ -6,6 +6,7 @@ import ModalButton from './ModalButton';
 const CreateLoanButton = ({ user, afterCreate, borrower, principal }) => {
     const [form] = Form.useForm();
     const [isModalVisible, setIsModalVisible] = useState(false);
+    const [loading, setLoading] = useState(false);
 
     const [expiryDate, setExpiryDate] = useState(null);
     const [maturityDate, setMaturityDate] = useState(null);
@@ -36,6 +37,7 @@ const CreateLoanButton = ({ user, afterCreate, borrower, principal }) => {
     };
 
     const handleOk = async () => {
+        setLoading(true);
         const values = form.getFieldsValue();
         const startDate = dayjs(values.start);
         const expiryDate = dayjs(values.expiry);
@@ -61,9 +63,11 @@ const CreateLoanButton = ({ user, afterCreate, borrower, principal }) => {
             .then(async (values) => {
                 form.resetFields();
                 await createLoanOffer(values, user);
+                setLoading(false);
             })
             .catch((info) => {
                 console.log('Validate Failed:', info);
+                setLoading(false);
             });
     };
 
@@ -152,7 +156,15 @@ const CreateLoanButton = ({ user, afterCreate, borrower, principal }) => {
         </Form>
     );
 
-    return <ModalButton buttonText="Create Loan Offer" modalTitle="Create Loan Offer" modalContent={modalContent} onOk={handleOk} />;
+    return (
+        <ModalButton
+            buttonText="Create Loan Offer"
+            modalTitle="Create Loan Offer"
+            modalContent={modalContent}
+            onOk={handleOk}
+            loading={loading}
+        />
+    );
 };
 
 export default CreateLoanButton;
