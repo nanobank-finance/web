@@ -3,7 +3,7 @@ import { Form, InputNumber, Tooltip, DatePicker } from 'antd';
 import dayjs from 'dayjs';
 import ModalButton from './ModalButton';
 
-const CreateLoanButton = ({ user, afterCreate }) => {
+const CreateLoanButton = ({ user, afterCreate, borrower, principal }) => {
     const [form] = Form.useForm();
     const [isModalVisible, setIsModalVisible] = useState(false);
 
@@ -70,8 +70,8 @@ const CreateLoanButton = ({ user, afterCreate }) => {
     const createLoanOffer = async (values, user) => {
         console.log(values);
         const loanOffer = {
-            borrower: values.borrower,
-            principal: values.amount_asking,
+            borrower: borrower,
+            principal: principal,
             interest: values.interest / 100.0,
             payments: values.payments,
             start: dayjs(values.start).valueOf(),
@@ -91,6 +91,7 @@ const CreateLoanButton = ({ user, afterCreate }) => {
             });
 
             const result = await response.json();
+            console.log(result);
             navigation.navigate(`/loan/${result.metadata.loan}`);
         } catch (error) {
             console.log(error);

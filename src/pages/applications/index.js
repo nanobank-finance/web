@@ -81,6 +81,8 @@ const Applications = () => {
                     afterCreate={() => {
                         /* TODO: logic if needed after creating a loan, like refreshing the data */
                     }}
+                    borrower={record.borrower}
+                    principal={record.amount_asking}
                 />
             ),
             key: 'action'
