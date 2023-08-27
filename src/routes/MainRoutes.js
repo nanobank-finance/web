@@ -3,27 +3,19 @@ import Loadable from 'components/Loadable';
 import MainLayout from 'layout/MainLayout';
 import PrivateRoute from 'routes/PrivateRoutes';
 
-const LoanMarketplace = Loadable(lazy(() => import('pages/loan-marketplace')));
 const CheckPage = Loadable(lazy(() => import('pages/check')));
 const OnboardPage = Loadable(lazy(() => import('pages/onboard')));
-const MyLoans = Loadable(lazy(() => import('pages/my-loans')));
-const BillPay = Loadable(lazy(() => import('pages/bill-pay')));
 const Credit = Loadable(lazy(() => import('pages/credit')));
 const LoanDetails = Loadable(lazy(() => import('pages/loan-details')));
+const Loans = Loadable(lazy(() => import('pages/loans')));
+const Applications = Loadable(lazy(() => import('pages/applications')));
+const Vouches = Loadable(lazy(() => import('pages/vouches')));
 
 const MainRoutes = [
     {
         path: '/',
         element: <MainLayout />,
         children: [
-            {
-                path: '/',
-                element: (
-                    <PrivateRoute>
-                        <LoanMarketplace />
-                    </PrivateRoute>
-                )
-            },
             {
                 path: 'check',
                 element: (
@@ -41,26 +33,26 @@ const MainRoutes = [
                 )
             },
             {
-                path: 'marketplace',
-                element: (
-                    <PrivateRoute>
-                        <LoanMarketplace />
-                    </PrivateRoute>
-                )
-            },
-            {
                 path: 'loans',
                 element: (
                     <PrivateRoute>
-                        <MyLoans />
+                        <Loans />
                     </PrivateRoute>
                 )
             },
             {
-                path: 'bills',
+                path: 'applications',
                 element: (
                     <PrivateRoute>
-                        <BillPay />
+                        <Applications />
+                    </PrivateRoute>
+                )
+            },
+            {
+                path: 'vouches',
+                element: (
+                    <PrivateRoute>
+                        <Vouches />
                     </PrivateRoute>
                 )
             },
@@ -73,7 +65,7 @@ const MainRoutes = [
                 )
             },
             {
-                path: 'loans/:loanId',
+                path: 'loan/:loanId',
                 element: (
                     <PrivateRoute>
                         <LoanDetails />

@@ -1,28 +1,25 @@
-import { useState, useEffect } from 'react';
-
-// material-ui
-import { Grid } from '@mui/material';
+import { useState, useEffect, useRef, useContext } from 'react';
 
 // ant design
 import { Table } from 'antd';
 
 // project import
 import { useAuth } from 'pages/authentication/auth-forms/AuthProvider';
-import { load_endpoint, columns } from 'pages/my-loans';
+import load_endpoint from 'utils/load_endpoint';
 
-// react
-import { useNavigate } from 'react-router-dom';
+const columns = [];
 
-const Lending = () => {
+const Vouches = () => {
     const [dataLoading, setLoading] = useState(false);
     const [items, setItems] = useState([]);
     const { user, loading } = useAuth();
 
     useEffect(() => {
         load_endpoint(
-            'http://127.0.0.1:8000/loans/user/self/accepted?perspective=lender&recent=True',
+            user,
+            'http://127.0.0.1:8000/vouch?recent=True',
             (result) => {
-                // setItems(result);
+                setItems(result);
                 setLoading(false);
             },
             (error) => {
@@ -38,4 +35,4 @@ const Lending = () => {
     );
 };
 
-export default Lending;
+export default Vouches;

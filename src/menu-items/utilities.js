@@ -27,30 +27,23 @@ const utilities = {
     children: [
         {
             id: 'util-marketplace',
-            title: 'Loan Market',
+            title: 'Loans',
             type: 'item',
-            url: '/marketplace',
+            url: '/loans',
             icon: icons.FontSizeOutlined
         },
         {
             id: 'util-my-loans',
-            title: 'My Loans',
+            title: 'Applications',
             type: 'item',
-            url: '/loans',
+            url: '/applications',
             icon: icons.BgColorsOutlined
         },
         {
             id: 'util-bill-pay',
-            title: 'Bill Pay',
+            title: 'Vouches',
             type: 'item',
-            url: '/bills',
-            icon: icons.BarcodeOutlined
-        },
-        {
-            id: 'util-credit-rating',
-            title: 'Credit Rating',
-            type: 'item',
-            url: '/credit',
+            url: '/vouches',
             icon: icons.BarcodeOutlined
         }
     ]
