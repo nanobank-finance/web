@@ -6,8 +6,10 @@ import { Table } from 'antd';
 // project import
 import { useAuth } from 'pages/authentication/auth-forms/AuthProvider';
 import load_endpoint from 'utils/load_endpoint';
-import CreateApplicationButton from 'components/CreateApplicationButton';
-import CreateLoanButton from 'components/CreateLoanButton';
+import CreateApplicationButton from 'components/Buttons/CreateApplicationButton';
+import CreateLoanButton from 'components/Buttons/CreateLoanButton';
+import CreateVouchButton from 'components/Buttons/CreateVouchButton';
+import CreditCheckButton from 'components/Buttons/CreditCheckButton';
 
 const Applications = () => {
     const [dataLoading, setLoading] = useState(false);
@@ -42,7 +44,35 @@ const Applications = () => {
             key: 'closed'
         },
         {
-            title: 'Action',
+            title: 'Review Credit',
+            dataIndex: '',
+            key: 'x',
+            render: (text, record) => (
+                <CreditCheckButton
+                    user={user}
+                    afterCreate={() => {
+                        /* TODO: logic if needed after creating a loan, like refreshing the data */
+                    }}
+                />
+            ),
+            key: 'action'
+        },
+        {
+            title: 'Give Vouch',
+            dataIndex: '',
+            key: 'x',
+            render: (text, record) => (
+                <CreateVouchButton
+                    user={user}
+                    afterCreate={() => {
+                        /* TODO: logic if needed after creating a loan, like refreshing the data */
+                    }}
+                />
+            ),
+            key: 'action'
+        },
+        {
+            title: 'Give Offer',
             dataIndex: '',
             key: 'x',
             render: (text, record) => (

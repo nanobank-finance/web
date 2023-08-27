@@ -68,6 +68,7 @@ const CreateLoanButton = ({ user, afterCreate }) => {
     };
 
     const createLoanOffer = async (values, user) => {
+        console.log(values);
         const loanOffer = {
             borrower: values.borrower,
             principal: values.amount_asking,
