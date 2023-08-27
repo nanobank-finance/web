@@ -1,10 +1,11 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Form, InputNumber, Tooltip, DatePicker } from 'antd';
 import dayjs from 'dayjs';
 import ModalButton from './ModalButton';
 
 const CreateApplicationButton = ({ user, afterCreate }) => {
     const [form] = Form.useForm();
+    const [isModalVisible, setIsModalVisible] = useState(false);
 
     const addKeys = (items) => {
         // Add key prop to each item in the array
@@ -52,11 +53,7 @@ const CreateApplicationButton = ({ user, afterCreate }) => {
 
     const modalContent = (
         <Form form={form} layout="vertical">
-            <Form.Item
-                name="asking"
-                label="Amount Requested"
-                rules={[{ required: true, message: 'Please input the asking amount' }]}
-            >
+            <Form.Item name="asking" label="Amount Requested" rules={[{ required: true, message: 'Please input the asking amount' }]}>
                 <InputNumber min={0} />
             </Form.Item>
         </Form>

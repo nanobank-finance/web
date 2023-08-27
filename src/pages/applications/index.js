@@ -6,7 +6,8 @@ import { Table } from 'antd';
 // project import
 import { useAuth } from 'pages/authentication/auth-forms/AuthProvider';
 import load_endpoint from 'utils/load_endpoint';
-import CreateApplicationButton from 'components/CreateLoanButton';
+import CreateApplicationButton from 'components/CreateApplicationButton';
+import CreateLoanButton from 'components/CreateLoanButton';
 
 const columns = [
     {
@@ -39,7 +40,7 @@ const columns = [
         title: 'Action',
         dataIndex: '',
         key: 'x',
-        render: (text, record) => <Button onClick={() => handleButtonClick(record)}>Fund</Button>,
+        render: (text, record) => <CreateLoanButton onClick={() => handleButtonClick(record)}>Fund</CreateLoanButton>,
         key: 'action'
     }
 ];
@@ -71,7 +72,7 @@ const Applications = () => {
                     /* TODO: logic if needed after creating a loan, like refreshing the data */
                 }}
             />
-            <Table columns={columns} dataSource={[]} />
+            <Table columns={columns} dataSource={items} />
         </div>
     );
 };

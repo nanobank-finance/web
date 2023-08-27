@@ -1,10 +1,11 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Form, InputNumber, Tooltip, DatePicker } from 'antd';
 import dayjs from 'dayjs';
 import ModalButton from './ModalButton';
 
 const CreateLoanButton = ({ user, afterCreate }) => {
     const [form] = Form.useForm();
+    const [isModalVisible, setIsModalVisible] = useState(false);
 
     const addKeys = (items) => {
         // Add key prop to each item in the array
