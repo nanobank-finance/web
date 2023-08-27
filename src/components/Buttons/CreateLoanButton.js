@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Form, InputNumber, Tooltip, DatePicker } from 'antd';
 import dayjs from 'dayjs';
 import ModalButton from './ModalButton';
@@ -7,6 +8,7 @@ const CreateLoanButton = ({ user, afterCreate, borrower, principal }) => {
     const [form] = Form.useForm();
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [loading, setLoading] = useState(false);
+    const navigation = useNavigate();
 
     const [expiryDate, setExpiryDate] = useState(null);
     const [maturityDate, setMaturityDate] = useState(null);

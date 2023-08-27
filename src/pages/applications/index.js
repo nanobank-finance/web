@@ -23,11 +23,6 @@ const Applications = () => {
             key: 'application'
         },
         {
-            title: 'Borrower',
-            dataIndex: 'borrower',
-            key: 'borrower'
-        },
-        {
             title: 'Asking',
             dataIndex: 'amount_asking',
             key: 'amount_asking'

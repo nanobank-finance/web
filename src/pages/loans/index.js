@@ -1,16 +1,19 @@
 import { useState, useEffect, useRef, useContext } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 // ant design
 import { Table, Button } from 'antd';
 
 // project import
 import { useAuth } from 'pages/authentication/auth-forms/AuthProvider';
+import CreateApplicationButton from 'components/Buttons/CreateApplicationButton';
 import load_endpoint from 'utils/load_endpoint';
 
 const Loans = () => {
     const [dataLoading, setLoading] = useState(false);
     const [items, setItems] = useState([]);
     const { user, loading } = useAuth();
+    const navigation = useNavigate();
 
     const columns = [
         {
@@ -55,7 +58,7 @@ const Loans = () => {
             title: 'Action',
             key: 'x',
             render: (text, record) => (
-                <Button type="primary" onClick={() => history.push(`/loan/${record.key}`)}>
+                <Button type="primary" onClick={() => navigation(`/loan/${record.loan}`)}>
                     View Details
                 </Button>
             )
@@ -78,6 +81,13 @@ const Loans = () => {
 
     return (
         <div>
+            <h1>Loans</h1>
+            <CreateApplicationButton
+                user={user}
+                afterCreate={() => {
+                    /* TODO: logic if needed after creating a loan, like refreshing the data */
+                }}
+            />
             <Table columns={columns} dataSource={items} />
         </div>
     );
