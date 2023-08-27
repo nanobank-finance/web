@@ -65,7 +65,7 @@ const MainRoutes = [
                 )
             },
             {
-                path: 'loans/:loanId',
+                path: 'loan/:loanId',
                 element: (
                     <PrivateRoute>
                         <LoanDetails />
