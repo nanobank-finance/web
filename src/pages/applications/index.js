@@ -9,46 +9,53 @@ import load_endpoint from 'utils/load_endpoint';
 import CreateApplicationButton from 'components/CreateApplicationButton';
 import CreateLoanButton from 'components/CreateLoanButton';
 
-const columns = [
-    {
-        title: 'Application ID',
-        dataIndex: 'application',
-        key: 'application'
-    },
-    {
-        title: 'Borrower',
-        dataIndex: 'borrower',
-        key: 'borrower'
-    },
-    {
-        title: 'Asking',
-        dataIndex: 'amount_asking',
-        key: 'amount_asking'
-    },
-    {
-        title: 'Created',
-        dataIndex: 'created',
-        key: 'created'
-    },
-    {
-        title: 'Closed',
-        dataIndex: 'closed',
-        render: (text, record) => (record.closed ? 'Yes' : 'No'),
-        key: 'closed'
-    },
-    {
-        title: 'Action',
-        dataIndex: '',
-        key: 'x',
-        render: (text, record) => <CreateLoanButton onClick={() => handleButtonClick(record)}>Fund</CreateLoanButton>,
-        key: 'action'
-    }
-];
-
 const Applications = () => {
     const [dataLoading, setLoading] = useState(false);
     const [items, setItems] = useState([]);
     const { user, loading } = useAuth();
+
+    const columns = [
+        {
+            title: 'Application ID',
+            dataIndex: 'application',
+            key: 'application'
+        },
+        {
+            title: 'Borrower',
+            dataIndex: 'borrower',
+            key: 'borrower'
+        },
+        {
+            title: 'Asking',
+            dataIndex: 'amount_asking',
+            key: 'amount_asking'
+        },
+        {
+            title: 'Created',
+            dataIndex: 'created',
+            key: 'created'
+        },
+        {
+            title: 'Closed',
+            dataIndex: 'closed',
+            render: (text, record) => (record.closed ? 'Yes' : 'No'),
+            key: 'closed'
+        },
+        {
+            title: 'Action',
+            dataIndex: '',
+            key: 'x',
+            render: (text, record) => (
+                <CreateLoanButton
+                    user={user}
+                    afterCreate={() => {
+                        /* TODO: logic if needed after creating a loan, like refreshing the data */
+                    }}
+                />
+            ),
+            key: 'action'
+        }
+    ];
 
     useEffect(() => {
         load_endpoint(
@@ -66,6 +73,7 @@ const Applications = () => {
 
     return (
         <div>
+            <h1>Loan Applications</h1>
             <CreateApplicationButton
                 user={user}
                 afterCreate={() => {

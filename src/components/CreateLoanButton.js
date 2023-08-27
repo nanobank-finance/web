@@ -7,12 +7,9 @@ const CreateLoanButton = ({ user, afterCreate }) => {
     const [form] = Form.useForm();
     const [isModalVisible, setIsModalVisible] = useState(false);
 
-    const addKeys = (items) => {
-        // Add key prop to each item in the array
-        return items.map((item, index) => {
-            return { ...item, key: index };
-        });
-    };
+    const [expiryDate, setExpiryDate] = useState(null);
+    const [maturityDate, setMaturityDate] = useState(null);
+    const [startDate, setStartDate] = useState(null);
 
     const handleOfferExpiryDateChange = (dates) => {
         if (dates && dates.length > 0) {
@@ -38,7 +35,7 @@ const CreateLoanButton = ({ user, afterCreate }) => {
         }
     };
 
-    const handleOk = () => {
+    const handleOk = async () => {
         const values = form.getFieldsValue();
         const startDate = dayjs(values.start);
         const expiryDate = dayjs(values.expiry);
@@ -61,14 +58,42 @@ const CreateLoanButton = ({ user, afterCreate }) => {
         }
 
         form.validateFields()
-            .then((values) => {
+            .then(async (values) => {
                 form.resetFields();
-                createLoanOffer(values, user);
+                await createLoanOffer(values, user);
             })
             .catch((info) => {
                 console.log('Validate Failed:', info);
             });
-        afterCreate();
+    };
+
+    const createLoanOffer = async (values, user) => {
+        const loanOffer = {
+            borrower: values.borrower,
+            principal: values.amount_asking,
+            interest: values.interest / 100.0,
+            payments: values.payments,
+            start: dayjs(values.start).valueOf(),
+            expiry: dayjs(values.expiry).valueOf(),
+            maturity: dayjs(values.maturity).valueOf()
+        };
+
+        try {
+            const response = await fetch('http://localhost:8000/loan', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${user.token}`,
+                    'X-User-Uid': `${user.uid}`
+                },
+                body: JSON.stringify(loanOffer)
+            });
+
+            const result = await response.json();
+            navigation.navigate(`/loan/${result.metadata.loan}`);
+        } catch (error) {
+            console.log(error);
+        }
     };
 
     const modalContent = (
@@ -125,7 +150,7 @@ const CreateLoanButton = ({ user, afterCreate }) => {
         </Form>
     );
 
-    return <ModalButton buttonText="Create New Loan" modalTitle="Create Loan Offer" modalContent={modalContent} onOk={handleOk} />;
+    return <ModalButton buttonText="Create Loan Offer" modalTitle="Create Loan Offer" modalContent={modalContent} onOk={handleOk} />;
 };
 
 export default CreateLoanButton;

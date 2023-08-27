@@ -60,7 +60,12 @@ const CreateApplicationButton = ({ user, afterCreate }) => {
     );
 
     return (
-        <ModalButton buttonText="Create New Application" modalTitle="Create Loan Application" modalContent={modalContent} onOk={handleOk} />
+        <ModalButton
+            buttonText="Create Loan Application"
+            modalTitle="Create Loan Application"
+            modalContent={modalContent}
+            onOk={handleOk}
+        />
     );
 };
 
