@@ -6,9 +6,43 @@ import { Table } from 'antd';
 // project import
 import { useAuth } from 'pages/authentication/auth-forms/AuthProvider';
 import load_endpoint from 'utils/load_endpoint';
-import CreateLoanButton from 'components/CreateLoanButton';
+import CreateApplicationButton from 'components/CreateLoanButton';
 
-const columns = [];
+const columns = [
+    {
+        title: 'Application ID',
+        dataIndex: 'application',
+        key: 'application'
+    },
+    {
+        title: 'Borrower',
+        dataIndex: 'borrower',
+        key: 'borrower'
+    },
+    {
+        title: 'Asking',
+        dataIndex: 'amount_asking',
+        key: 'amount_asking'
+    },
+    {
+        title: 'Created',
+        dataIndex: 'created',
+        key: 'created'
+    },
+    {
+        title: 'Closed',
+        dataIndex: 'closed',
+        render: (text, record) => (record.closed ? 'Yes' : 'No'),
+        key: 'closed'
+    },
+    {
+        title: 'Action',
+        dataIndex: '',
+        key: 'x',
+        render: (text, record) => <Button onClick={() => handleButtonClick(record)}>Fund</Button>,
+        key: 'action'
+    }
+];
 
 const Applications = () => {
     const [dataLoading, setLoading] = useState(false);
@@ -31,7 +65,7 @@ const Applications = () => {
 
     return (
         <div>
-            <CreateLoanButton
+            <CreateApplicationButton
                 user={user}
                 afterCreate={() => {
                     /* TODO: logic if needed after creating a loan, like refreshing the data */

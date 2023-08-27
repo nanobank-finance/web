@@ -37,7 +37,7 @@ const CreateLoanButton = ({ user, afterCreate }) => {
         }
     };
 
-    const handleOfferOk = () => {
+    const handleOk = () => {
         const values = form.getFieldsValue();
         const startDate = dayjs(values.start);
         const expiryDate = dayjs(values.expiry);
@@ -77,19 +77,14 @@ const CreateLoanButton = ({ user, afterCreate }) => {
                 label={<Tooltip title="Date that the loan starts">Start Date</Tooltip>}
                 rules={[{ required: true, message: 'Required' }]}
             >
-                <DatePicker showTime format="YYYY-MM-DD HH:mm:ss" onChange={handleStartDateChange} value={expiryDate ? [expiryDate] : []} />
+                <DatePicker showTime format="YYYY-MM-DD HH:mm:ss" onChange={handleStartDateChange} />
             </Form.Item>
             <Form.Item
                 name="maturity"
                 label={<Tooltip title="Date that the borrower's final loan payment is due">Maturity Date</Tooltip>}
                 rules={[{ required: true, message: 'Required' }]}
             >
-                <DatePicker
-                    showTime
-                    format="YYYY-MM-DD HH:mm:ss"
-                    onChange={handleMaturityDateChange}
-                    value={maturityDate ? [maturityDate] : []}
-                />
+                <DatePicker showTime format="YYYY-MM-DD HH:mm:ss" onChange={handleMaturityDateChange} />
             </Form.Item>
             <Form.Item
                 name="payments"
@@ -124,19 +119,12 @@ const CreateLoanButton = ({ user, afterCreate }) => {
                 label={<Tooltip title="Date that the offer will expire">Offer Expiry</Tooltip>}
                 rules={[{ required: true, message: 'Required' }]}
             >
-                <DatePicker
-                    showTime
-                    format="YYYY-MM-DD HH:mm:ss"
-                    onChange={handleOfferExpiryDateChange}
-                    value={expiryDate ? [expiryDate] : []}
-                />
+                <DatePicker showTime format="YYYY-MM-DD HH:mm:ss" onChange={handleOfferExpiryDateChange} />
             </Form.Item>
         </Form>
     );
 
-    return (
-        <ModalButton buttonText="Create New Application" modalTitle="Create Loan Offer" modalContent={modalContent} onOk={handleOfferOk} />
-    );
+    return <ModalButton buttonText="Create New Loan" modalTitle="Create Loan Offer" modalContent={modalContent} onOk={handleOk} />;
 };
 
 export default CreateLoanButton;
