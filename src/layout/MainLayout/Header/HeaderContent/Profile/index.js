@@ -91,7 +91,7 @@ const Profile = () => {
                 navigate('/login', { replace: true });
             })
             .catch((error) => {
-                console.error('Logout error:', error);
+                alert(`Error: ${error.message || 'An error occurred!'}`);
             });
     };
 

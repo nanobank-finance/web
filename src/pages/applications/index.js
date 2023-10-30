@@ -94,6 +94,7 @@ const Applications = () => {
             },
             (error) => {
                 setLoading(false);
+                alert(`Error: ${error.message || 'An error occurred!'}`);
             }
         );
     }, []);

@@ -33,7 +33,8 @@ const CreateApplicationButton = ({ user, afterCreate }) => {
                     setIsModalVisible(false);
                 },
                 (error) => {
-                    console.log(error);
+                    setIsModalVisible(false);
+                    alert(`Error: ${error.message || 'An error occurred!'}`);
                 }
             );
     };

@@ -84,6 +84,7 @@ const FirebaseSocial = () => {
         console.log(errorMessage);
         console.log(errorCode);
         // TODO: lock account after too many failed attempts?
+        alert(`Error: ${error.message || 'An error occurred!'}`);
     };
 
     const googleHandler = async () => {

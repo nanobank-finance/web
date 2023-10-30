@@ -24,6 +24,7 @@ const Vouches = () => {
             },
             (error) => {
                 setLoading(false);
+                alert(`Error: ${error.message || 'An error occurred!'}`);
             }
         );
     }, []);

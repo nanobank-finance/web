@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useContext } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 // ant design
@@ -66,10 +66,6 @@ const Loans = () => {
     ];
 
     useEffect(() => {
-        load_data();
-    }, []);
-
-    const load_data = () => {
         load_endpoint(
             user,
             'http://127.0.0.1:8000/loans?recent=True',
@@ -79,9 +75,10 @@ const Loans = () => {
             },
             (error) => {
                 setLoading(false);
+                alert(`Error: ${error.message || 'An error occurred!'}`);
             }
         );
-    };
+    });
 
     return (
         <div>

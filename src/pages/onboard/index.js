@@ -41,6 +41,7 @@ const OnboardPage = () => {
     const errorHandler = (error) => {
         // This function will be called when an error occurs
         console.error('Sumsub WebSDK Error:', error);
+        alert(`Error: ${error.message || 'An error occurred!'}`);
     };
 
     const messageHandler = (message) => {

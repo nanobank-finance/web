@@ -71,6 +71,7 @@ const VoucherActivity = () => {
             },
             (error) => {
                 setLoading(false);
+                alert(`Error: ${error.message || 'An error occurred!'}`);
             }
         );
     }, []);
@@ -95,6 +96,7 @@ const VoucheeActivity = () => {
             },
             (error) => {
                 setLoading(false);
+                alert(`Error: ${error.message || 'An error occurred!'}`);
             }
         );
     }, []);
@@ -119,6 +121,7 @@ const LendingActivity = () => {
             },
             (error) => {
                 setLoading(false);
+                alert(`Error: ${error.message || 'An error occurred!'}`);
             }
         );
     }, []);
@@ -143,6 +146,7 @@ const BorrowingActivity = () => {
             },
             (error) => {
                 setLoading(false);
+                alert(`Error: ${error.message || 'An error occurred!'}`);
             }
         );
     }, []);
@@ -167,6 +171,7 @@ const PaymentActivity = () => {
             },
             (error) => {
                 setLoading(false);
+                alert(`Error: ${error.message || 'An error occurred!'}`);
             }
         );
     }, []);
@@ -191,6 +196,7 @@ const ApplicationActivity = () => {
             },
             (error) => {
                 setLoading(false);
+                alert(`Error: ${error.message || 'An error occurred!'}`);
             }
         );
     }, []);
@@ -215,6 +221,7 @@ const CreditRating = () => {
             },
             (error) => {
                 setLoading(false);
+                alert(`Error: ${error.message || 'An error occurred!'}`);
             }
         );
     }, []);
