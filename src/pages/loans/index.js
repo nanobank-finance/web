@@ -66,6 +66,10 @@ const Loans = () => {
     ];
 
     useEffect(() => {
+        load_data();
+    }, []);
+
+    const load_data = () => {
         load_endpoint(
             user,
             'http://127.0.0.1:8000/loans?recent=True',
@@ -77,7 +81,7 @@ const Loans = () => {
                 setLoading(false);
             }
         );
-    }, []);
+    };
 
     return (
         <div>
@@ -85,7 +89,7 @@ const Loans = () => {
             <CreateApplicationButton
                 user={user}
                 afterCreate={() => {
-                    /* TODO: logic if needed after creating a loan, like refreshing the data */
+                    navigation('/login', { replace: true });
                 }}
             />
             <Table columns={columns} dataSource={items} />

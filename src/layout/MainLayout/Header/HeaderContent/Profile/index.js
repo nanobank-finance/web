@@ -130,6 +130,11 @@ const Profile = () => {
         return <div>Loading...</div>;
     }
 
+    console.log(user);
+    if (!user.photoURL) {
+        user.photoURL = avatar1;
+    }
+
     return (
         <Box sx={{ flexShrink: 0, ml: 0.75 }}>
             <ButtonBase

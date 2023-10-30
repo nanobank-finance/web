@@ -24,7 +24,8 @@ const ModalButton = ({ buttonText, modalTitle, modalContent, onOk, onCancel, but
                 {buttonText}
             </Button>
             <Modal title={modalTitle} visible={isModalVisible} onOk={handleModalOk} onCancel={handleModalHide} confirmLoading={loading}>
-                <Spin spinning={loading}>{modalContent}</Spin>
+                {/* <Spin spinning={loading}>{modalContent}</Spin> */}
+                {modalContent}
             </Modal>
         </>
     );
